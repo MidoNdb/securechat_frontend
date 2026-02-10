@@ -12,7 +12,7 @@ class AppEnvironment {
   static String get baseUrl {
     switch (current) {
       case Environment.LOCAL:
-        return 'http://10.79.164.64:8000'; 
+        return 'http://10.56.245.198:8000'; 
       case Environment.STAGING:
         return 'https://staging.securechat.mr';
       case Environment.PRODUCTION:
@@ -23,7 +23,7 @@ class AppEnvironment {
   static String get wsUrl {
     switch (current) {
       case Environment.LOCAL:
-        return 'ws://10.79.164.64:8000'; // ⚠️ Pas de /ws/chat/ ici 
+        return 'ws://10.56.245.198:8000'; // ⚠️ Pas de /ws/chat/ ici 
       case Environment.STAGING:
         return 'wss://staging.securechat.mr';
       case Environment.PRODUCTION:
