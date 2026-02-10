@@ -1,0 +1,101 @@
+# Créer structure lib/
+New-Item -ItemType Directory -Force -Path "lib\app\routes"
+New-Item -ItemType Directory -Force -Path "lib\app\translations"
+New-Item -ItemType Directory -Force -Path "lib\core\shared"
+New-Item -ItemType Directory -Force -Path "lib\core\utils"
+New-Item -ItemType Directory -Force -Path "lib\core\widgets"
+New-Item -ItemType Directory -Force -Path "lib\data\models"
+New-Item -ItemType Directory -Force -Path "lib\data\api"
+New-Item -ItemType Directory -Force -Path "lib\data\services"
+New-Item -ItemType Directory -Force -Path "lib\modules\auth\controllers"
+New-Item -ItemType Directory -Force -Path "lib\modules\auth\views"
+New-Item -ItemType Directory -Force -Path "lib\modules\chat\controllers"
+New-Item -ItemType Directory -Force -Path "lib\modules\chat\views"
+New-Item -ItemType Directory -Force -Path "lib\modules\chat\widgets"
+New-Item -ItemType Directory -Force -Path "lib\modules\media\controllers"
+New-Item -ItemType Directory -Force -Path "lib\modules\media\views"
+New-Item -ItemType Directory -Force -Path "assets\images"
+New-Item -ItemType Directory -Force -Path "assets\icons"
+New-Item -ItemType Directory -Force -Path "assets\fonts"
+New-Item -ItemType Directory -Force -Path "test\unit"
+New-Item -ItemType Directory -Force -Path "test\widget"
+New-Item -ItemType Directory -Force -Path "test\integration"
+
+# Créer fichiers app/
+New-Item -ItemType File -Force -Path "lib\app\routes\app_pages.dart"
+New-Item -ItemType File -Force -Path "lib\app\routes\app_routes.dart"
+New-Item -ItemType File -Force -Path "lib\app\translations\app_translations.dart"
+New-Item -ItemType File -Force -Path "lib\app\translations\ar_translations.dart"
+New-Item -ItemType File -Force -Path "lib\app\translations\fr_translations.dart"
+New-Item -ItemType File -Force -Path "lib\app\theme.dart"
+New-Item -ItemType File -Force -Path "lib\app\initial_binding.dart"
+
+# Créer fichiers core/
+New-Item -ItemType File -Force -Path "lib\core\shared\environment.dart"
+New-Item -ItemType File -Force -Path "lib\core\shared\storage_keys.dart"
+New-Item -ItemType File -Force -Path "lib\core\shared\language_controller.dart"
+New-Item -ItemType File -Force -Path "lib\core\utils\validators.dart"
+New-Item -ItemType File -Force -Path "lib\core\utils\formatters.dart"
+New-Item -ItemType File -Force -Path "lib\core\utils\helpers.dart"
+New-Item -ItemType File -Force -Path "lib\core\widgets\custom_button.dart"
+New-Item -ItemType File -Force -Path "lib\core\widgets\custom_text_field.dart"
+New-Item -ItemType File -Force -Path "lib\core\widgets\loading_indicator.dart"
+New-Item -ItemType File -Force -Path "lib\core\widgets\avatar_widget.dart"
+New-Item -ItemType File -Force -Path "lib\core\widgets\empty_state_widget.dart"
+New-Item -ItemType File -Force -Path "lib\core\widgets\error_widget.dart"
+New-Item -ItemType File -Force -Path "lib\core\widgets\confirmation_dialog.dart"
+
+# Créer fichiers data/models/
+New-Item -ItemType File -Force -Path "lib\data\models\user.dart"
+New-Item -ItemType File -Force -Path "lib\data\models\contact.dart"
+New-Item -ItemType File -Force -Path "lib\data\models\conversation.dart"
+New-Item -ItemType File -Force -Path "lib\data\models\participant.dart"
+New-Item -ItemType File -Force -Path "lib\data\models\group.dart"
+New-Item -ItemType File -Force -Path "lib\data\models\message.dart"
+New-Item -ItemType File -Force -Path "lib\data\models\message_status.dart"
+New-Item -ItemType File -Force -Path "lib\data\models\media.dart"
+
+# Créer fichiers data/api/
+New-Item -ItemType File -Force -Path "lib\data\api\dio_client.dart"
+New-Item -ItemType File -Force -Path "lib\data\api\api_endpoints.dart"
+New-Item -ItemType File -Force -Path "lib\data\api\api_interceptors.dart"
+
+# Créer fichiers data/services/
+New-Item -ItemType File -Force -Path "lib\data\services\storage_service.dart"
+New-Item -ItemType File -Force -Path "lib\data\services\auth_service.dart"
+New-Item -ItemType File -Force -Path "lib\data\services\message_service.dart"
+New-Item -ItemType File -Force -Path "lib\data\services\contact_service.dart"
+New-Item -ItemType File -Force -Path "lib\data\services\media_service.dart"
+New-Item -ItemType File -Force -Path "lib\data\services\crypto_service.dart"
+New-Item -ItemType File -Force -Path "lib\data\services\notification_service.dart"
+New-Item -ItemType File -Force -Path "lib\data\services\websocket_service.dart"
+
+# Créer fichiers modules/auth/
+New-Item -ItemType File -Force -Path "lib\modules\auth\controllers\login_controller.dart"
+New-Item -ItemType File -Force -Path "lib\modules\auth\controllers\register_controller.dart"
+New-Item -ItemType File -Force -Path "lib\modules\auth\controllers\verify_sms_controller.dart"
+New-Item -ItemType File -Force -Path "lib\modules\auth\views\login_view.dart"
+New-Item -ItemType File -Force -Path "lib\modules\auth\views\register_view.dart"
+New-Item -ItemType File -Force -Path "lib\modules\auth\views\verify_sms_view.dart"
+New-Item -ItemType File -Force -Path "lib\modules\auth\binding.dart"
+
+# Créer fichiers modules/chat/
+New-Item -ItemType File -Force -Path "lib\modules\chat\controllers\home_controller.dart"
+New-Item -ItemType File -Force -Path "lib\modules\chat\controllers\chat_controller.dart"
+New-Item -ItemType File -Force -Path "lib\modules\chat\controllers\contacts_controller.dart"
+New-Item -ItemType File -Force -Path "lib\modules\chat\views\home_view.dart"
+New-Item -ItemType File -Force -Path "lib\modules\chat\views\chat_view.dart"
+New-Item -ItemType File -Force -Path "lib\modules\chat\views\contacts_view.dart"
+New-Item -ItemType File -Force -Path "lib\modules\chat\widgets\message_bubble.dart"
+New-Item -ItemType File -Force -Path "lib\modules\chat\widgets\message_input.dart"
+New-Item -ItemType File -Force -Path "lib\modules\chat\widgets\contact_card.dart"
+New-Item -ItemType File -Force -Path "lib\modules\chat\widgets\conversation_card.dart"
+New-Item -ItemType File -Force -Path "lib\modules\chat\binding.dart"
+
+# Créer fichiers modules/media/
+New-Item -ItemType File -Force -Path "lib\modules\media\controllers\media_controller.dart"
+New-Item -ItemType File -Force -Path "lib\modules\media\views\image_picker_view.dart"
+New-Item -ItemType File -Force -Path "lib\modules\media\views\media_viewer_view.dart"
+New-Item -ItemType File -Force -Path "lib\modules\media\binding.dart"
+
+Write-Host "✅ Structure créée avec succès!" -ForegroundColor Green
