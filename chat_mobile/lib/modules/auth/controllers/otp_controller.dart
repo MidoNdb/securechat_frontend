@@ -1,4 +1,3 @@
-// lib/modules/auth/controllers/otp_controller.dart
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,7 +15,6 @@ class OtpController extends GetxController {
   final canResend = false.obs;
   final countdown = 60.obs;
   
-  // ✅ AJOUT: Callback pour succès
   Function()? onVerificationSuccess;
   
   @override
@@ -75,20 +73,20 @@ class OtpController extends GetxController {
       
       startCountdown();
       
-      Get.snackbar(
-        'Code envoyé',
-        'Un code de vérification a été envoyé par SMS',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green.withOpacity(0.1),
-        colorText: Colors.green,
-        icon: const Icon(Icons.check_circle, color: Colors.green),
-        duration: const Duration(seconds: 3),
-      );
+      // Get.snackbar(
+      //   'Code envoyé',
+      //   'Un code de vérification a été envoyé par SMS',
+      //   snackPosition: SnackPosition.TOP,
+      //   backgroundColor: Colors.green.withOpacity(0.1),
+      //   colorText: Colors.green,
+      //   icon: const Icon(Icons.check_circle, color: Colors.green),
+      //   duration: const Duration(seconds: 3),
+      // );
       
     } catch (e) {
       Get.snackbar(
-        'Erreur',
-        'Impossible d\'envoyer le code: ${_extractError(e)}',
+        '',
+        'Impossible d\'envoyer le code',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.withOpacity(0.1),
         colorText: Colors.red,
@@ -102,12 +100,11 @@ class OtpController extends GetxController {
   
 // lib/modules/auth/controllers/otp_controller.dart
 
-/// ✅ VERSION SIMPLE - Retourne true/false
 Future<bool> verifyOtpSimple() async {
   final code = codeController.text.trim();
   
   if (code.length != 6) {
-    Get.snackbar('Erreur', 'Le code doit contenir 6 chiffres');
+    Get.snackbar('', 'Le code doit contenir 6 chiffres');
     return false;
   }
   
@@ -117,37 +114,37 @@ Future<bool> verifyOtpSimple() async {
     final response = await _otpService.verifyOtp(phoneNumberClean.value, code);
     
     if (response['success'] == true) {
-      Get.snackbar(
-        'Vérifié',
-        'Numéro vérifié avec succès',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green.withOpacity(0.1),
-        colorText: Colors.green,
-        duration: const Duration(milliseconds: 500),
-      );
+      // Get.snackbar(
+      //   'Vérifié',
+      //   'Numéro vérifié avec succès',
+      //   snackPosition: SnackPosition.TOP,
+      //   backgroundColor: Colors.green.withOpacity(0.1),
+      //   colorText: Colors.green,
+      //   duration: const Duration(milliseconds: 500),
+      // );
       
       await Future.delayed(const Duration(milliseconds: 300));
       return true;
     } else {
-      Get.snackbar('Erreur', 'Code incorrect');
+      Get.snackbar('', 'Code incorrect');
       return false;
     }
     
   } catch (e) {
-    Get.snackbar('Erreur', _extractError(e));
+   
     return false;
   } finally {
     isLoading.value = false;
   }
 }
   
-  String _extractError(dynamic error) {
-    final errorStr = error.toString();
-    if (errorStr.contains('Exception:')) {
-      return errorStr.split('Exception:').last.trim();
-    }
-    return errorStr.length > 100 
-        ? 'Une erreur est survenue' 
-        : errorStr;
-  }
+  // String _extractError(dynamic error) {
+  //   final errorStr = error.toString();
+  //   if (errorStr.contains('Exception:')) {
+  //     return errorStr.split('Exception:').last.trim();
+  //   }
+  //   return errorStr.length > 100 
+  //       ? 'Une erreur est survenue' 
+  //       : errorStr;
+  // }
 }

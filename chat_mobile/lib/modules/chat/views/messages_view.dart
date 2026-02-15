@@ -59,56 +59,56 @@ class MessagesView extends GetView<MessagesController> {
               ),
             ],
           ),
-          Row(
-            children: [
-              // _buildIconButton(
-              //   icon: Icons.search,
-              //   onPressed: () => print("Recherche avancée"),
-              // ),
-              // const SizedBox(width: 12),
-              Stack(
-                children: [
-                  _buildIconButton(
-                    icon: Icons.settings,
-                    onPressed: () => Get.toNamed('/settings'),
-                  ),
-                  Obx(() {
-                    if (controller.totalUnreadCount.value > 0) {
-                      return Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color(0xFF764ba2),
-                              width: 2,
-                            ),
-                          ),
-                          constraints: const BoxConstraints(
-                            minWidth: 18,
-                            minHeight: 18,
-                          ),
-                          child: Text(
-                            '${controller.totalUnreadCount.value}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  }),
-                ],
-              ),
-            ],
-          ),
+          // Row(
+          //   children: [
+          //     // _buildIconButton(
+          //     //   icon: Icons.search,
+          //     //   onPressed: () => print("Recherche avancée"),
+          //     // ),
+          //     // const SizedBox(width: 12),
+          //     Stack(
+          //       children: [
+          //         _buildIconButton(
+          //           icon: Icons.settings,
+          //           onPressed: () => Get.toNamed('/settings'),
+          //         ),
+          //         Obx(() {
+          //           if (controller.totalUnreadCount.value > 0) {
+          //             return Positioned(
+          //               right: 0,
+          //               top: 0,
+          //               child: Container(
+          //                 padding: const EdgeInsets.all(4),
+          //                 decoration: BoxDecoration(
+          //                   color: Colors.red,
+          //                   shape: BoxShape.circle,
+          //                   border: Border.all(
+          //                     color: const Color(0xFF764ba2),
+          //                     width: 2,
+          //                   ),
+          //                 ),
+          //                 constraints: const BoxConstraints(
+          //                   minWidth: 18,
+          //                   minHeight: 18,
+          //                 ),
+          //                 child: Text(
+          //                   '${controller.totalUnreadCount.value}',
+          //                   style: const TextStyle(
+          //                     color: Colors.white,
+          //                     fontSize: 10,
+          //                     fontWeight: FontWeight.bold,
+          //                   ),
+          //                   textAlign: TextAlign.center,
+          //                 ),
+          //               ),
+          //             );
+          //           }
+          //           return const SizedBox.shrink();
+          //         }),
+          //       ],
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );

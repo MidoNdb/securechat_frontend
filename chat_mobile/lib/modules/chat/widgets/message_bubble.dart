@@ -1,5 +1,3 @@
-// lib/modules/chat/widgets/message_bubble.dart
-// ✅ VERSION AMÉLIORÉE - Switch automatique selon type de message
 
 import 'package:chat_mobile/data/models/message.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +21,6 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Switch selon le type de message
     switch (message.type.toUpperCase()) {
       case 'IMAGE':
         return ImageBubble(
@@ -56,7 +53,6 @@ class MessageBubble extends StatelessWidget {
     }
   }
   
-  /// Widget temporaire pour types non implémentés
   Widget _buildComingSoon(String type) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

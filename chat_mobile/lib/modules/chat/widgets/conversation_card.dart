@@ -62,7 +62,6 @@ class ConversationCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   
-                  // Dernier message + Badge
                   Row(
                     children: [
                       Expanded(
@@ -80,10 +79,6 @@ class ConversationCard extends StatelessWidget {
       ),
     );
   }
-
-  // ========================================
-  // AVATAR
-  // ========================================
   
   Widget _buildAvatar() {
     return Container(
@@ -116,10 +111,6 @@ class ConversationCard extends StatelessWidget {
     }
     return name.substring(0, 1).toUpperCase();
   }
-
-  // ========================================
-  // TIMESTAMP
-  // ========================================
   
   Widget _buildTimestamp() {
     final date = conversation.lastMessageAt ?? conversation.createdAt;
@@ -149,14 +140,9 @@ class ConversationCard extends StatelessWidget {
     );
   }
 
-  // ========================================
-  // ✅ DERNIER MESSAGE (CORRIGÉ)
-  // ========================================
-  
   Widget _buildLastMessage() {
     final lastMessage = conversation.lastMessage;
     
-    // Cas 1 : Pas de dernier message
     if (lastMessage == null) {
       return Text(
         'Aucun message',
@@ -169,8 +155,6 @@ class ConversationCard extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       );
     }
-
-    // Cas 2 : Message déchiffré disponible
     if (lastMessage.decryptedContent != null && 
         lastMessage.decryptedContent!.isNotEmpty) {
       final isMine = lastMessage.senderId == currentUserId;
@@ -192,8 +176,6 @@ class ConversationCard extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       );
     }
-
-    // Cas 3 : Message chiffré (non déchiffré)
     return Row(
       children: [
         Icon(
@@ -213,10 +195,6 @@ class ConversationCard extends StatelessWidget {
       ],
     );
   }
-
-  // ========================================
-  // BADGE NON LUS
-  // ========================================
   
   Widget _buildUnreadBadge() {
     return Container(

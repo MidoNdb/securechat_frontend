@@ -7,29 +7,30 @@ enum Environment {
 }
 
 class AppEnvironment {
-  static const Environment current = Environment.LOCAL;
+  static const Environment current = Environment.PRODUCTION; // Changez cette valeur pour switcher d'environnement
  
   static String get baseUrl {
     switch (current) {
       case Environment.LOCAL:
-        return 'http://10.56.245.198:8000'; 
+        return 'http://172.16.182.17:8000'; //10.0.2.2 pour émulateur Android,-- 10.79.164.64
       case Environment.STAGING:
-        return 'https://staging.securechat.mr';
+        return 'https://securechabackend-production.up.railway.app';
       case Environment.PRODUCTION:
-        return 'https://api.securechat.mr';
+        return 'https://securechabackend-production.up.railway.app';
     }
   }
 
   static String get wsUrl {
     switch (current) {
       case Environment.LOCAL:
-        return 'ws://10.56.245.198:8000'; // ⚠️ Pas de /ws/chat/ ici 
+        return 'ws://172.16.182.17:8000'; // ⚠️ Pas de /ws/chat/ ici 
       case Environment.STAGING:
-        return 'wss://staging.securechat.mr';
+        return 'wss://securechabackend-production.up.railway.app';
       case Environment.PRODUCTION:
-        return 'wss://api.securechat.mr';
+        return 'wss://securechabackend-production.up.railway.app';
     }
   }
+
 
 
   static String get name {

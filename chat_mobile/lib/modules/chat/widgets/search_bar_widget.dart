@@ -25,21 +25,17 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
     super.initState();
     _controller = TextEditingController();
     
-    // ✅ Écouter les changements pour afficher/masquer l'icône X
     _controller.addListener(_onTextChanged);
   }
 
   void _onTextChanged() {
     final hasText = _controller.text.isNotEmpty;
-    
-    // ✅ Mettre à jour l'état seulement si ça change
     if (hasText != _hasText) {
       setState(() {
         _hasText = hasText;
       });
     }
     
-    // ✅ Notifier le parent
     widget.onChanged(_controller.text);
   }
 

@@ -1,4 +1,3 @@
-// lib/modules/chat/controllers/contacts_controller.dart
 
 import 'package:chat_mobile/modules/chat/controllers/messages_controller.dart';
 import 'package:get/get.dart';
@@ -33,8 +32,6 @@ class ContactsController extends GetxController {
     return await _contactService.checkPhoneNumber(phoneNumber);
   }
 
- // lib/modules/chat/controllers/contacts_controller.dart
-
 Future<bool> addContact({
   required String phoneNumber,
   required String nickname,
@@ -43,7 +40,7 @@ Future<bool> addContact({
   try {
     isLoading.value = true;
 
-    print('🔄 ContactsController.addContact:');
+    print('ContactsController.addContact:');
     print('   Phone: $phoneNumber');
     print('   Nickname: "$nickname"');
 
@@ -63,13 +60,13 @@ Future<bool> addContact({
       
       Get.snackbar(
         'Succès',
-        'Contact "${newContact['display_name']}" ajouté',  // ✅ Affiche le nom
+        'Contact "${newContact['display_name']}" ajouté',  
         backgroundColor: Colors.green.withOpacity(0.1),
         colorText: Colors.green,
         duration: const Duration(seconds: 2),
       );
       
-      return true;  // ✅ IMPORTANT: Retourne true
+      return true;  
     }
 
     print('newContact is null');
@@ -147,7 +144,7 @@ Future<bool> addContact({
       if (success) {
         contacts.removeWhere((c) => c['id'] == contactId);
         Get.snackbar(
-          '✅',
+          '',
           'Contact supprimé',
           backgroundColor: Colors.green.withOpacity(0.1),
           colorText: Colors.green,
@@ -180,19 +177,16 @@ Future<bool> addContact({
     return contacts.where((c) => c['is_blocked'] == true).toList();
   }
 
-  // lib/modules/chat/controllers/contacts_controller.dart
-
-// ✅ Quand un contact est sélectionné
 void onContactTap(Map<String, dynamic> contact) {
   final contactUserId = contact['contact_user_id']?.toString();
   final contactName = contact['display_name'] ?? 'Contact';
   
   if (contactUserId == null) {
-    Get.snackbar('❌', 'ID utilisateur manquant');
+    Get.snackbar('', 'ID utilisateur manquant');
     return;
   }
   
-  print('📞 Contact selected: $contactName ($contactUserId)');
+  print(' Contact selected: $contactName ($contactUserId)');
   
   // ✅ Appelle MessagesController pour gérer la navigation
   final messagesController = Get.find<MessagesController>();

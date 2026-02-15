@@ -10,7 +10,6 @@ class MainShellController extends GetxController {
   final WebSocketService _wsService = Get.find<WebSocketService>();
   final SecureStorageService _storage = Get.find<SecureStorageService>();
 
-  // ✅ NavigatorKey pour chaque onglet
   final List<GlobalKey<NavigatorState>> navigatorKeys = [
     GlobalKey<NavigatorState>(),  // Messages (0)
     GlobalKey<NavigatorState>(),  // Contacts (1)
@@ -21,84 +20,95 @@ class MainShellController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print("🏠 MainShellController initialized");
-    // ✅ Écouter les appels entrants
+    print("MainShellController initialized");
     _listenForIncomingCalls();
   }
 
-  /// Écoute les messages WebSocket pour détecter une offre d'appel
-  void _listenForIncomingCalls() {
-    print("👂 MainShellController: Listening for incoming calls");
+ 
+void _listenForIncomingCalls() {
+  _wsService.messageStream.listen((data) {
+    final type = data['type'] as String?;
     
-    _wsService.messageStream.listen((data) {
-      final type = data['type'];
-      print("📨 MainShellController received: $type");
+    if (type == 'incoming_call') {
+      print("Appel entrant WebRTC reçu !");
       
-      // Si on reçoit une offre d'appel
-      if (type == 'call_offer') {
-        print("🔔🔔🔔 Appel entrant détecté!");
-        print("📞 Data: $data");
-        
-        _handleIncomingCall(data);
-      }
-    });
-  }
-
-  /// Gérer l'appel entrant
-  Future<void> _handleIncomingCall(Map<String, dynamic> data) async {
-    try {
-      // Récupérer les infos
-      final senderId = data['sender_id'] ?? data['data']?['sender_id'];
-      final payload = data['data'] ?? data;
-      final sdp = payload['sdp'];
-      final callType = payload['call_type'] ?? 'video'; // 'video' ou 'audio'
+      print("   De: ${data['from_user_id']}");
+      print("   Conversation: ${data['conversation_id']}");
+      print("   Type: ${data['data']?['call_type']}");
       
-      print("📞 Sender ID: $senderId");
-      print("📞 Call type: $callType");
-      print("📞 SDP: ${sdp != null ? 'YES' : 'NO'}");
-      
-      if (senderId == null || sdp == null) {
-        print("❌ Missing sender_id or sdp");
-        return;
-      }
-
-      // Récupérer l'ID utilisateur actuel
-      final currentUserId = await _storage.getUserId();
-      if (currentUserId == null) {
-        print("❌ Current user ID is null");
-        return;
-      }
-
-      print("📞 Current user: $currentUserId");
-      
-      // Générer un ID d'appel
-      final callId = 'call_${DateTime.now().millisecondsSinceEpoch}';
-      
-      // ✅ Arguments COMPLETS pour CallsController
-      final arguments = {
-        'callId': callId,
-        'conversationId': '', // Peut être vide pour l'instant
-        'callerId': senderId,
-        'receiverId': currentUserId,
-        'targetId': senderId,
-        'callType': callType, // ✅ 'video' ou 'audio', pas 'hasVideo'
-        'isCaller': false,
-        'remoteSdp': sdp, // ✅ SDP de l'offre
-      };
-      
-      print("📦 Navigating to /calls with arguments:");
-      print("   $arguments");
-      
-      // ✅ Navigation vers l'écran d'appel
-      Get.toNamed('/calls', arguments: arguments);
-      
-    } catch (e, stackTrace) {
-      print("❌ Error handling incoming call: $e");
-      print("Stack trace: $stackTrace");
+      _handleIncomingCall(data);
     }
-  }
+  });
+}
 
-  // ✅ Changer d'onglet
+  Future<void> _handleIncomingCall(Map<String, dynamic> data) async {
+  try {
+    print("APPEL ENTRANT (MainShellController)");
+    
+    // Extraire les données
+    final payload = data['data'] ?? {};
+    final senderId = data['from_user_id']?.toString() ?? 
+                     data['sender_id']?.toString() ?? 
+                     payload['sender_id']?.toString() ?? '';
+    
+    final conversationId = data['conversation_id']?.toString() ?? '';
+    final sdp = payload['sdp']?.toString() ?? '';
+    final callType = (payload['call_type'] ?? 'AUDIO').toString().toUpperCase();
+    
+    print("   De: $senderId");
+    print("   Conversation: $conversationId");
+    print("   Type: $callType");
+    print("   SDP présent: ${sdp.isNotEmpty}");
+    
+    // Validation
+    if (senderId.isEmpty) {
+      print("senderId manquant");
+      return;
+    }
+    
+    if (conversationId.isEmpty) {
+      print("conversationId manquant");
+      return;
+    }
+    
+    if (sdp.isEmpty) {
+      print("SDP manquant");
+      return;
+    }
+    
+    // Récupérer l'ID utilisateur actuel
+    final currentUserId = await _storage.getUserId();
+    if (currentUserId == null) {
+      print("Current user ID is null");
+      return;
+    }
+    
+    print("User ID retrieved: $currentUserId");
+    
+    // Arguments pour CallsView
+    final arguments = {
+      'conversationId': conversationId,  
+      'targetId': senderId,
+      'isCaller': false,
+      'callType': callType,
+      'sdp': sdp,
+    };
+    
+    print("Navigation vers /calls avec arguments:");
+    arguments.forEach((key, value) {
+      print("   $key: ${value.toString().length > 50 ? '${value.toString().substring(0, 50)}...' : value}");
+    });
+    
+    // Navigation
+    Get.toNamed('/calls', arguments: arguments);
+    
+    print("Navigation effectuée");
+    
+  } catch (e, stackTrace) {
+    print("Erreur _handleIncomingCall: $e");
+    print("Stack trace: $stackTrace");
+  }
+}
   void changePage(int index) {
     if (currentIndex.value == index) {
       navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
@@ -107,7 +117,6 @@ class MainShellController extends GetxController {
     }
   }
 
-  // ✅ Raccourcis navigation
   void goToMessages() => changePage(0);
   void goToContacts() => changePage(1);
   void goToCalls() => changePage(2);
@@ -124,41 +133,4 @@ class MainShellController extends GetxController {
   }
 
 }
-
-
-
-
-
-// // lib/modules/main/controllers/main_shell_controller.dart
-
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-
-// class MainShellController extends GetxController {
-//   final currentIndex = 0.obs;
-  
-//   // ✅ NavigatorKey pour chaque onglet
-//   final List<GlobalKey<NavigatorState>> navigatorKeys = [
-//     GlobalKey<NavigatorState>(),  // Messages (0)
-//     GlobalKey<NavigatorState>(),  // Contacts (1)
-//     GlobalKey<NavigatorState>(),  // Calls (2)
-//     GlobalKey<NavigatorState>(),  // Profile (3)
-//   ];
-
-//   // ✅ Changer d'onglet
-//   void changePage(int index) {
-//     if (currentIndex.value == index) {
-//       // Si on reclique sur le même onglet, retour à la racine
-//       navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
-//     } else {
-//       currentIndex.value = index;
-//     }
-//   }
-
-//   // ✅ Raccourcis navigation
-//   void goToMessages() => changePage(0);
-//   void goToContacts() => changePage(1);
-//   void goToCalls() => changePage(2);
-//   void goToProfile() => changePage(3);
-// }
 

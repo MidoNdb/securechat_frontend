@@ -1,5 +1,3 @@
-// lib/modules/chat/controllers/chat_controller.dart
-// ✅ VERSION FINALE CORRIGÉE - Support complet vocal + images
 
 import 'dart:io';
 import 'dart:async';
@@ -58,16 +56,16 @@ class ChatController extends GetxController {
     // Initialiser les services multimédia
     try {
       _imageService = Get.find<ImageMessageService>();
-      print('✅ ImageMessageService initialisé');
+      print('ImageMessageService initialisé');
     } catch (e) {
-      print('⚠️ ImageMessageService non disponible: $e');
+      print('ImageMessageService non disponible: $e');
     }
     
     try {
       _voiceService = Get.find<VoiceMessageService>();
-      print('✅ VoiceMessageService initialisé');
+      print('VoiceMessageService initialisé');
     } catch (e) {
-      print('⚠️ VoiceMessageService non disponible: $e');
+      print('VoiceMessageService non disponible: $e');
     }
     
     // Écouter changements TextField
@@ -95,14 +93,12 @@ class ChatController extends GetxController {
     _messageService.joinConversation(conversation.id);
     await loadMessages();
     _listenNewMessages();
-    
-    // ✅ AJOUT CRITIQUE : Écouter les signaux d'appel
     _listenCallSignals();
     
     await _messageService.markConversationAsRead(conversation.id);
 
   } catch (e) {
-    print('❌ Erreur init chat: $e');
+    print('Erreur init chat: $e');
     _showError('Impossible de charger le chat');
   }
 }
@@ -111,9 +107,9 @@ class ChatController extends GetxController {
     try {
       final userId = await _storage.getUserId();
       _currentUserId = userId;
-      print('✅ User ID chargé: $userId');
+      print('User ID chargé: $userId');
     } catch (e) {
-      print('❌ Erreur chargement user ID: $e');
+      print('Erreur chargement user ID: $e');
     }
   }
 
@@ -134,7 +130,7 @@ class ChatController extends GetxController {
       });
 
     } catch (e) {
-      print('❌ Erreur loadMessages: $e');
+      print('Erreur loadMessages: $e');
       _showError('Impossible de charger les messages');
     } finally {
       isLoading.value = false;
@@ -161,7 +157,7 @@ class ChatController extends GetxController {
       }
 
     } catch (e) {
-      print('❌ Erreur onLoadMore: $e');
+      print('Erreur onLoadMore: $e');
     } finally {
       isLoadingMore.value = false;
     }
@@ -171,33 +167,32 @@ class ChatController extends GetxController {
     _newMessagesSubscription = _messageService.newMessagesStream.listen(
       (message) {
         if (message.conversationId == conversation.id) {
-          // ✅ Log pour debug selon le type
+          
           if (message.type == 'VOICE') {
-            print('🎤 Message vocal reçu: ${message.id}');
+            print('Message vocal reçu: ${message.id}');
           } else if (message.type == 'IMAGE') {
-            print('🖼️ Message image reçu: ${message.id}');
+            print('Message image reçu: ${message.id}');
           }
           
           _addNewMessage(message);
         }
       },
       onError: (error) {
-        print('❌ Erreur stream: $error');
+        print('Erreur stream: $error');
       },
     );
   }
   Future<void> _addNewMessage(Message message) async {  // ← async
   final exists = messages.any((m) => m.id == message.id);
   if (exists) {
-    print('⚠️ Message déjà présent: ${message.id}');
+    print('Message déjà présent: ${message.id}');
     return;
   }
 
-  print('➕ Ajout nouveau message: ${message.id}');
+  print('Ajout nouveau message: ${message.id}');
   
   Message finalMessage = message;
   
-  // ✅ Si le message est encore chiffré, le déchiffrer maintenant
   if (message.type == 'TEXT' && 
       message.decryptedContent == null && 
       message.encryptedContent != null) {
@@ -211,10 +206,10 @@ class ChatController extends GetxController {
         decryptedContent: decryptedContent,
       );
       
-      print('✅ Message déchiffré: ${decryptedContent.substring(0, 20)}...');
+      print('Message déchiffré: ${decryptedContent.substring(0, 20)}...');
       
     } catch (e) {
-      print('❌ Erreur déchiffrement: $e');
+      print('Erreur déchiffrement: $e');
       // Garder le message chiffré si erreur
     }
   }
@@ -229,27 +224,6 @@ class ChatController extends GetxController {
     _messageService.markConversationAsRead(conversation.id);
   }
 }
-
-  // void _addNewMessage(Message message) {
-  //   final exists = messages.any((m) => m.id == message.id);
-  //   if (exists) {
-  //     print('⚠️ Message déjà présent: ${message.id}');
-  //     return;
-  //   }
-
-  //   messages.add(message);
-  //   print('✅ Nouveau message ajouté: ${message.id} (type: ${message.type})');
-
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     _scrollToBottom();
-  //   });
-
-  //   if (message.senderId != _currentUserId) {
-  //     _messageService.markConversationAsRead(conversation.id);
-  //   }
-  // }
-
-  // ==================== ENVOI MESSAGES ====================
 
   Future<void> sendMessage() async {
     // Si images sélectionnées, envoyer images
@@ -279,14 +253,12 @@ class ChatController extends GetxController {
       _addNewMessage(sentMessage);
 
     } catch (e) {
-      print('❌ Erreur sendMessage: $e');
+      print('Erreur sendMessage: $e');
       _showError('Impossible d\'envoyer le message');
     } finally {
       isSendingMessage.value = false;
     }
   }
-
-  // ==================== GESTION IMAGES ====================
 
   void addImageToSelection(File imageFile) {
     if (selectedImages.length >= 10) {
@@ -295,12 +267,12 @@ class ChatController extends GetxController {
     }
     
     selectedImages.add(imageFile);
-    print('✅ Image ajoutée à la sélection (${selectedImages.length}/10)');
+    print('Image ajoutée à la sélection (${selectedImages.length}/10)');
   }
 
   void removeImageFromSelection(int index) {
     selectedImages.removeAt(index);
-    print('✅ Image retirée de la sélection (${selectedImages.length}/10)');
+    print('Image retirée de la sélection (${selectedImages.length}/10)');
   }
 
   Future<void> sendSelectedImages() async {
@@ -313,7 +285,7 @@ class ChatController extends GetxController {
       final recipientId = _getRecipientId();
       final imagesToSend = List<File>.from(selectedImages);
       
-      print('📤 Envoi de ${imagesToSend.length} image(s)...');
+      print('Envoi de ${imagesToSend.length} image(s)...');
       
       // Vider la sélection immédiatement
       selectedImages.clear();
@@ -322,7 +294,7 @@ class ChatController extends GetxController {
       int successCount = 0;
       for (int i = 0; i < imagesToSend.length; i++) {
         try {
-          print('📤 Envoi image ${i + 1}/${imagesToSend.length}...');
+          print('Envoi image ${i + 1}/${imagesToSend.length}...');
           
           final message = await _imageService.sendImage(
             conversationId: conversation.id,
@@ -334,7 +306,7 @@ class ChatController extends GetxController {
           successCount++;
           
         } catch (e) {
-          print('❌ Erreur envoi image ${i + 1}: $e');
+          print('Erreur envoi image ${i + 1}: $e');
         }
       }
 
@@ -345,22 +317,18 @@ class ChatController extends GetxController {
       }
 
     } catch (e) {
-      print('❌ Erreur sendSelectedImages: $e');
+      print('Erreur sendSelectedImages: $e');
       _showError('Impossible d\'envoyer les images');
     } finally {
       isSendingMessage.value = false;
     }
   }
 
-  // ==================== MESSAGE VOCAL ====================
-
-  /// ✅ Envoyer un message vocal avec validation complète
   Future<void> sendVoiceMessage(String voiceFilePath) async {
-    print('🎤 === DÉBUT ENVOI MESSAGE VOCAL ===');
-    print('🎤 Chemin fichier: $voiceFilePath');
+    print('Chemin fichier: $voiceFilePath');
     
     if (isSendingMessage.value) {
-      print('⚠️ Envoi déjà en cours, annulation');
+      print('Envoi déjà en cours, annulation');
       return;
     }
 
@@ -374,37 +342,32 @@ class ChatController extends GetxController {
       }
       
       final fileSize = await voiceFile.length();
-      print('✅ Fichier vocal trouvé: ${fileSize / 1024} KB');
+      print('Fichier vocal trouvé: ${fileSize / 1024} KB');
       
-      // 2. Vérifier le service est disponible
-      if (_voiceService == null) {
-        throw Exception('VoiceMessageService non initialisé');
-      }
+     
       
       // 3. Récupérer le destinataire
       final recipientId = _getRecipientId();
-      print('📤 Destinataire: $recipientId');
+      print(' Destinataire: $recipientId');
       
       // 4. Envoyer via le service
-      print('🔐 Chiffrement et envoi en cours...');
+      print('Chiffrement et envoi en cours...');
       final message = await _voiceService.sendVoice(
         conversationId: conversation.id,
         recipientUserId: recipientId,
         voiceFile: voiceFile,
       );
 
-      print('✅ Message vocal envoyé: ${message.id}');
+      print('Message vocal envoyé: ${message.id}');
       
       // 5. Ajouter à la liste
       _addNewMessage(message);
       
-      // 6. Feedback utilisateur
-      // _showSuccess('Message vocal envoyé');
       
       print('🎤 === FIN ENVOI MESSAGE VOCAL ===');
 
     } catch (e, stackTrace) {
-      print('❌ Erreur sendVoiceMessage: $e');
+      print('Erreur sendVoiceMessage: $e');
       print('Stack trace: $stackTrace');
       _showError('Impossible d\'envoyer le message vocal');
     } finally {
@@ -412,15 +375,13 @@ class ChatController extends GetxController {
     }
   }
 
-  // ==================== UTILITAIRES ====================
-
   String _getRecipientId() {
     try {
       final recipient = conversation.participants
           .firstWhere((p) => p.userId != _currentUserId);
       return recipient.userId;
     } catch (e) {
-      print('❌ Erreur récupération recipientId: $e');
+      print('Erreur récupération recipientId: $e');
       throw Exception('Impossible de trouver le destinataire');
     }
   }
@@ -435,11 +396,10 @@ class ChatController extends GetxController {
     }
   }
 
-  // ==================== FEEDBACK UTILISATEUR ====================
-
+  
   void _showSuccess(String message) {
     Get.snackbar(
-      'Succès',
+      '',
       message,
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
@@ -453,7 +413,7 @@ class ChatController extends GetxController {
 
   void _showError(String message) {
     Get.snackbar(
-      'Erreur',
+      '',
       message,
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 3),
@@ -466,23 +426,52 @@ class ChatController extends GetxController {
   }
    // --- APPELS WEBRTC ---
 
- void _listenCallSignals() {
+void _listenCallSignals() {
   _callSignalsSubscription = _websocketService.messageStream.listen((data) {
     final type = data['type'] as String?;
-    final payload = data['data'] ?? {};
     
     if (type == 'incoming_call') {
+      
+      final payload = data['data'] ?? {};
+      final fromUserId = data['from_user_id']?.toString() ?? data['sender_id']?.toString() ?? "";
+      final conversationId = data['conversation_id']?.toString() ?? "";
+      final callType = (payload['call_type'] ?? 'AUDIO').toString().toUpperCase();
+      final sdp = payload['sdp']?.toString() ?? "";
+      
+      print('   De: $fromUserId');
+      print('   Conversation: $conversationId');
+      print('   Type: $callType');
+      print('   SDP présent: ${sdp.isNotEmpty}');
+      
+      if (fromUserId.isEmpty) {
+        print('fromUserId MANQUANT');
+        return;
+      }
+      
+      if (conversationId.isEmpty) {
+        print('conversationId MANQUANT');
+        return;
+      }
+      
+      if (sdp.isEmpty) {
+        print('SDP MANQUANT');
+        return;
+      }
+      
+      print('Navigation vers CallsView...');
+      
       Get.toNamed(AppRoutes.CALLS, arguments: {
-        'conversationId': conversation.id,
-        'targetId': data['from_user_id']?.toString() ?? "",
+        'conversationId': conversation.id, 
+        'targetId': fromUserId,
         'isCaller': false,
-        'callType': payload['call_type'] ?? 'VIDEO',
-        'sdp': payload['sdp'],
+        'callType': callType,
+        'sdp': sdp,
       });
+      
+      print('Navigation effectuée');
     }
   });
 }
-
   String get recipientId {
     try {
       return conversation.participants
@@ -495,7 +484,7 @@ class ChatController extends GetxController {
 
   void _showWarning(String message) {
     Get.snackbar(
-      'Attention',
+      '',
       message,
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
@@ -512,6 +501,7 @@ class ChatController extends GetxController {
     messageController.dispose();
     scrollController.dispose();
     _newMessagesSubscription?.cancel();
+    _callSignalsSubscription?.cancel(); 
     super.onClose();
   }
 }

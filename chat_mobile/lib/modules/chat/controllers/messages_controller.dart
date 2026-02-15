@@ -1,4 +1,3 @@
-// lib/modules/chat/controllers/messages_controller.dart
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -43,13 +42,13 @@ class MessagesController extends GetxController {
       
       if (userId != null) {
         _currentUserId = userId;
-        print('👤 Current user ID: $_currentUserId');
+        print('Current user ID: $_currentUserId');
       } else {
-        print('⚠️ No user ID in storage');
+        print('No user ID in storage');
         await _loadUserIdFromAPI();
       }
     } catch (e) {
-      print('❌ _initCurrentUser: $e');
+      print('_initCurrentUser: $e');
       await _loadUserIdFromAPI();
     }
   }
@@ -69,7 +68,7 @@ class MessagesController extends GetxController {
         }
       }
     } catch (e) {
-      print('❌ _loadUserIdFromAPI: $e');
+      print('_loadUserIdFromAPI: $e');
     }
   }
 
@@ -80,67 +79,60 @@ class MessagesController extends GetxController {
       final result = await _messageService.getConversations();
       
       if (result != null && result.isNotEmpty) {
-        // ✅ CORRECTION : Déchiffrer le dernier message avec gestion du type
+        
         for (var conversation in result) {
           if (conversation.lastMessage != null) {
             try {
               final msg = conversation.lastMessage!;
               
-              // ✅ GÉRER L'AFFICHAGE SELON LE TYPE DE MESSAGE
               String decryptedText;
               
-              // 📷 Messages multimédia → Afficher un texte descriptif
               if (msg.type == 'IMAGE') {
-                decryptedText = '📷 Photo';
+                decryptedText = 'Photo';
               } else if (msg.type == 'VIDEO') {
-                decryptedText = '🎥 Vidéo';
+                decryptedText = 'Vidéo';
               } else if (msg.type == 'VOICE') {
-                decryptedText = '🎤 Message vocal';
+                decryptedText = 'Message vocal';
               } else if (msg.type == 'FILE') {
-                decryptedText = '📎 Fichier';
+                decryptedText = 'Fichier';
               } 
-              // 💬 Messages texte → Déchiffrer le contenu
               else {
-                // ✅ SI C'EST NOTRE MESSAGE → Utiliser le cache local
                 if (msg.senderId == _currentUserId) {
-                  print('📦 Message de nous-même, recherche dans le cache...');
+                  print('Message de nous-même, recherche dans le cache...');
                   
                   final cached = await _storage.getMessagePlaintext(msg.id);
                   
                   if (cached != null) {
                     decryptedText = cached;
-                    print('✅ Trouvé dans le cache: "$decryptedText"');
+                    print('Trouvé dans le cache: "$decryptedText"');
                   } else {
-                    print('⚠️ Cache manquant pour notre message ${msg.id}');
+                    print('Cache manquant pour notre message ${msg.id}');
                     
-                    // Vérifier si message a les champs E2EE
                     if (msg.nonce == null || msg.authTag == null || msg.signature == null) {
                       decryptedText = '[Message]';
                     } else {
-                      // Essayer de déchiffrer quand même
                       try {
                         decryptedText = await _messageService.decryptMessage(msg);
                       } catch (e) {
-                        print('⚠️ Déchiffrement échoué: $e');
+                        print('Déchiffrement échoué: $e');
                         decryptedText = '[Message illisible]';
                       }
                     }
                   }
                 } 
-                // ✅ SINON → Déchiffrer normalement (message reçu)
                 else {
-                  print('📨 Message reçu, déchiffrement...');
+                  print('Message reçu, déchiffrement...');
                   
                   // Vérifier si le message a les champs E2EE
                   if (msg.nonce == null || msg.authTag == null || msg.signature == null) {
-                    print('⚠️ Champs E2EE manquants');
+                    print('Champs E2EE manquants');
                     decryptedText = '[Message]';
                   } else {
                     try {
                       decryptedText = await _messageService.decryptMessage(msg);
-                      print('✅ Déchiffré: "$decryptedText"');
+                      print('Déchiffré: "$decryptedText"');
                     } catch (e) {
-                      print('⚠️ Erreur déchiffrement: $e');
+                      print('Erreur déchiffrement: $e');
                       
                       // Gérer les différents types d'erreurs
                       if (e.toString().contains('Signature invalide')) {
@@ -157,7 +149,6 @@ class MessagesController extends GetxController {
                 }
               }
               
-              // Mettre à jour avec le texte déchiffré ou le label approprié
               final index = result.indexOf(conversation);
               result[index] = conversation.copyWith(
                 lastMessage: msg.copyWith(
@@ -166,7 +157,7 @@ class MessagesController extends GetxController {
               );
               
             } catch (e) {
-              print('❌ Erreur traitement dernier message: $e');
+              print('Erreur traitement dernier message: $e');
               
               final index = result.indexOf(conversation);
               result[index] = conversation.copyWith(
@@ -187,25 +178,25 @@ class MessagesController extends GetxController {
         
         conversations.assignAll(result);
         
-        print('✅ Loaded ${conversations.length} conversations');
-        print('📋 Conversations: ${conversations.map((c) => '${c.name} (${c.id})').toList()}');
+        print('Loaded ${conversations.length} conversations');
+        print('Conversations: ${conversations.map((c) => '${c.name} (${c.id})').toList()}');
         
         _applyCurrentFilter();
         calculateUnreadCount();
       } else {
-        print('⚠️ No conversations loaded');
+        print('No conversations loaded');
         conversations.clear();
         filteredConversations.clear();
       }
     } catch (e) {
-      print('❌ loadConversations: $e');
+      print('loadConversations: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
   void openConversation(Conversation conversation) {
-    print('📂 Opening conversation: ${conversation.name} (${conversation.id})');
+    print('Opening conversation: ${conversation.name} (${conversation.id})');
     
     Get.to(
       () => const ChatView(),
@@ -214,7 +205,7 @@ class MessagesController extends GetxController {
       },
       preventDuplicates: true,
     )?.then((_) {
-      print('🔄 Returned from ChatView - Reloading conversations');
+      print('Returned from ChatView - Reloading conversations');
       loadConversations();
     });
   }
@@ -224,7 +215,7 @@ class MessagesController extends GetxController {
     required String contactName,
   }) async {
     try {
-      print('🔍 Looking for conversation with user: $contactUserId');
+      print('Looking for conversation with user: $contactUserId');
       print('   Contact name: $contactName');
       
       var existing = conversations.firstWhereOrNull((conv) {
@@ -233,7 +224,7 @@ class MessagesController extends GetxController {
       });
 
       if (existing == null) {
-        print('🔄 Not found locally, reloading conversations...');
+        print('Not found locally, reloading conversations...');
         await loadConversations();
         
         existing = conversations.firstWhereOrNull((conv) {
@@ -243,7 +234,7 @@ class MessagesController extends GetxController {
       }
 
       if (existing != null) {
-        print('✅ Found existing conversation: ${existing.name}');
+        print('Found existing conversation: ${existing.name}');
         
         Get.off(
           () => const ChatView(),
@@ -251,20 +242,20 @@ class MessagesController extends GetxController {
             'conversation': existing,
           },
         )?.then((_) {
-          print('🔄 Returned from ChatView - Reloading conversations');
+          print('Returned from ChatView - Reloading conversations');
           loadConversations();
         });
         return;
       }
 
-      print('📝 Creating new conversation with $contactUserId...');
+      print('Creating new conversation with $contactUserId...');
       
       final newConversation = await _messageService.createDirectConversation(
         contactUserId,
       );
 
       if (newConversation != null) {
-        print('✅ Conversation created: ${newConversation.name} (${newConversation.id})');
+        print('Conversation created: ${newConversation.name} (${newConversation.id})');
         
         await loadConversations();
         
@@ -274,7 +265,7 @@ class MessagesController extends GetxController {
             'conversation': newConversation,
           },
         )?.then((_) {
-          print('🔄 Returned from ChatView - Reloading conversations');
+          print('Returned from ChatView - Reloading conversations');
           loadConversations();
         });
       } else {
@@ -282,10 +273,10 @@ class MessagesController extends GetxController {
       }
       
     } catch (e) {
-      print('❌ openOrCreateConversation: $e');
+      print('openOrCreateConversation: $e');
       
       Get.snackbar(
-        '❌ Erreur',
+        '',
         'Impossible de créer la conversation',
         backgroundColor: Colors.red.withOpacity(0.1),
         colorText: Colors.red,
@@ -304,7 +295,7 @@ class MessagesController extends GetxController {
           calculateUnreadCount();
         }
       } catch (e) {
-        print('❌ Erreur parsing message WebSocket: $e');
+        print('Erreur parsing message WebSocket: $e');
       }
     });
   }

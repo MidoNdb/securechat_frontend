@@ -16,7 +16,6 @@ class OtpVerificationView extends StatelessWidget {
     
     return WillPopScope(
       onWillPop: () async {
-        // ✅ Supprimer seulement lors du retour arrière
         Future.delayed(const Duration(milliseconds: 100), () {
           if (Get.isRegistered<OtpController>()) {
             Get.delete<OtpController>();
@@ -107,7 +106,6 @@ class OtpVerificationView extends StatelessWidget {
                     if (success) {
                       registerController.isPhoneVerified.value = true;
                       Navigator.of(context).pop();
-                      // ✅ Supprimer après fermeture
                       Future.delayed(const Duration(milliseconds: 200), () {
                         if (Get.isRegistered<OtpController>()) {
                           Get.delete<OtpController>();
@@ -127,7 +125,6 @@ class OtpVerificationView extends StatelessWidget {
                           if (success) {
                             registerController.isPhoneVerified.value = true;
                             Navigator.of(context).pop();
-                            // ✅ Supprimer APRÈS fermeture
                             Future.delayed(const Duration(milliseconds: 200), () {
                               if (Get.isRegistered<OtpController>()) {
                                 Get.delete<OtpController>();

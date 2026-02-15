@@ -1,4 +1,3 @@
-// lib/modules/chat/controllers/image_bubble_controller.dart
 
 import 'dart:io';
 import 'package:get/get.dart';
@@ -27,7 +26,7 @@ class ImageBubbleController extends GetxController {
       isLoading.value = true;
       error.value = '';
       
-      print('🖼️ Chargement image ${message.id}...');
+      print('Chargement image ${message.id}...');
       print('   Encrypted content length: ${message.encryptedContent.length}');
       print('   Nonce: ${message.nonce}');
       print('   Auth tag: ${message.authTag}');
@@ -37,10 +36,10 @@ class ImageBubbleController extends GetxController {
       imageFile.value = file;
       isLoading.value = false;
       
-      print('✅ Image déchiffrée: ${file.path}');
+      print('Image déchiffrée: ${file.path}');
       
     } catch (e, stackTrace) {
-      print('❌ Erreur chargement image: $e');
+      print('Erreur chargement image: $e');
       print('Stack trace: $stackTrace');
       
       error.value = 'Impossible de charger l\'image';

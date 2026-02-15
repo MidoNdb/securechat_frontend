@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'package:chat_mobile/app/routes/app_routes.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart' hide navigator;
+import 'package:get/get.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 import '../../../data/services/websocket_service.dart';
@@ -15,307 +16,238 @@ class CallsController extends GetxController {
   final RTCVideoRenderer localRenderer = RTCVideoRenderer();
   final RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
 
-  final isVideoEnabled = true.obs;
-  final isMicEnabled = true.obs;
-  final isCallActive = false.obs;
-  final isRemoteVideoAvailable = false.obs;
-  final callStatus = "Initialisation...".obs;
-  final isRinging = false.obs;
-
+  String conversationId = "";
   String targetUserId = "";
+  bool isCaller = false;
+  String callType = "VIDEO";
   String? pendingRemoteSdp;
-  String? currentConversationId;
-  String callType = "VIDEO"; // Par défaut
   
   final List<RTCIceCandidate> _iceCandidatesQueue = [];
   StreamSubscription? _wsSubscription;
+  Timer? _callTimer;
+  int _secondsElapsed = 0;
+
+  final isVideoEnabled = true.obs;
+  final isMicEnabled = true.obs;
+  final isCallActive = false.obs;
+  final isCallConnected = false.obs;
+  final isRemoteVideoAvailable = false.obs;
+  final callStatus = "Initialisation...".obs;
+  final isRinging = false.obs;
+  final callDuration = "".obs;
+  final audioLevel = 0.0.obs;
 
   @override
   void onInit() {
     super.onInit();
-    _initRenderers();
-    _setupWebSocketListener();
-    _loadArguments();
+    
+    try {
+      final args = Get.arguments as Map<String, dynamic>;
+      conversationId = args['conversationId'] as String;
+      targetUserId = args['targetId'] as String;
+      callType = (args['callType'] as String).toUpperCase();
+      isCaller = args['isCaller'] as bool;
+      
+      _initRenderers().then((_) {
+        _setupWebSocketListener();
+        
+        if (isCaller) {
+          callStatus.value = "Appel en cours...";
+          initCall(true);
+        } else {
+          final remoteSdp = args['sdp'] as String?;
+          if (remoteSdp != null) {
+            pendingRemoteSdp = remoteSdp;
+          }
+          isRinging.value = true;
+          callStatus.value = "Appel entrant...";
+        }
+      });
+      
+    } catch (e) {
+      Get.back();
+      // Get.snackbar('Erreur', 'Impossible d\'initialiser l\'appel');
+    }
   }
 
   Future<void> _initRenderers() async {
     await localRenderer.initialize();
     await remoteRenderer.initialize();
   }
-void _loadArguments() {
-  if (Get.arguments != null) {
-    // On utilise les clés définies dans MainShellController
-    targetUserId = Get.arguments['targetId']?.toString() ?? "";
-    currentConversationId = Get.arguments['conversationId']?.toString();
-    
-    // Harmonisation du type d'appel
-    callType = Get.arguments['callType']?.toString().toUpperCase() ?? "VIDEO";
-    
-    if (Get.arguments['isCaller'] == true) {
-      initCall(true);
-    } else {
-      // ✅ MODIFICATION : Utiliser 'remoteSdp' au lieu de 'sdp'
-      pendingRemoteSdp = Get.arguments['remoteSdp']; 
-      isRinging.value = true;
-      callStatus.value = "Appel entrant...";
-      
-      print("📥 Appel entrant de: $targetUserId avec SDP: ${pendingRemoteSdp != null}");
-    }
+
+  void _setupWebSocketListener() {
+    _wsSubscription = _wsService.messageStream.listen((data) {
+      final String type = data['type'] ?? '';
+      final payload = data['data'] ?? {};
+
+      switch (type) {
+        case 'call_accepted':
+          final sdp = payload['sdp'];
+          if (sdp != null && sdp.isNotEmpty) {
+            callStatus.value = "Connexion...";
+            _handleAnswer(sdp);
+          }
+          break;
+          
+        case 'ice_candidate':
+          _handleIceCandidate(payload);
+          break;
+          
+        case 'call_rejected':
+          _cleanupCall();
+          Get.back();
+          // Get.snackbar('Appel rejeté', 'L\'appelé a décliné');
+          break;
+          
+        case 'call_ended':
+          _cleanupCall();
+          Get.back();
+          break;
+      }
+    });
   }
-}
-  // void _loadArguments() {
-  //   if (Get.arguments != null) {
-  //     targetUserId = Get.arguments['targetId']?.toString() ?? "";
-  //     currentConversationId = Get.arguments['conversationId']?.toString();
-  //     // On récupère le type d'appel depuis les arguments (AUDIO ou VIDEO)
-  //     callType = Get.arguments['callType']?.toString().toUpperCase() ?? "VIDEO";
-      
-  //     if (Get.arguments['isCaller'] == true) {
-  //       initCall(true);
-  //     } else {
-  //       pendingRemoteSdp = Get.arguments['sdp'];
-  //       isRinging.value = true;
-  //       callStatus.value = "Appel entrant...";
-  //     }
-  //   }
-  // }
-void _setupWebSocketListener() {
-  _wsSubscription = _wsService.messageStream.listen((data) {
-    final String type = data['type'] ?? '';
-    final payload = data['data'] ?? {};
 
-    switch (type) {
-      // On ignore 'incoming_call' ici car MainShell l'a déjà traité
-      case 'call_accepted':
-        _handleAnswer(payload['sdp']);
-        break;
-      case 'ice_candidate':
-        _handleIceCandidate(payload);
-        break;
-      case 'call_rejected':
-      case 'call_ended':
-        _cleanupCall();
-        if (Get.isDialogOpen ?? false) Get.back();
-        Get.back();
-        break;
-    }
-  });
-}
-// void _setupWebSocketListener() {
-//   _wsSubscription = _wsService.messageStream.listen((data) {
-//     final String type = data['type'] ?? '';
-//     final payload = data['data'] ?? {};
-
-//     print('📩 Signal WebRTC reçu: $type'); // ← DEBUG
-
-//     switch (type) {
-//       // ✅ AJOUT CRITIQUE : Gérer l'appel entrant
-//       case 'incoming_call':
-//         print('📞 Appel entrant détecté !');
-//         _handleIncomingCall(payload);
-//         break;
-        
-//       case 'call_accepted':
-//         _handleAnswer(payload['sdp']);
-//         break;
-        
-//       case 'ice_candidate':
-//         _handleIceCandidate(payload);
-//         break;
-        
-//       case 'call_rejected':
-//       case 'call_ended':
-//         _cleanupCall();
-//         if (Get.currentRoute.contains('CALLS')) Get.back();
-//         break;
-//     }
-//   });
-// }
-
-// ✅ NOUVELLE MÉTHODE : Gérer l'appel entrant
-void _handleIncomingCall(Map<String, dynamic> payload) {
-  print('📞 === APPEL ENTRANT ===');
-  print('   SDP: ${payload['sdp']?.substring(0, 50) ?? "null"}...');
-  print('   Call Type: ${payload['call_type']}');
-  
-  // Stocker le SDP distant
-  pendingRemoteSdp = payload['sdp'];
-  
-  // Définir le type d'appel (AUDIO ou VIDEO)
-  callType = (payload['call_type'] ?? 'VIDEO').toString().toUpperCase();
-  
-  // Activer le mode sonnerie
-  isRinging.value = true;
-  callStatus.value = "Appel entrant...";
-  
-  print('✅ Appel entrant configuré');
-}
-
-  // --- LOGIQUE CORE WEBRTC ---
   Future<void> initCall(bool isCaller) async {
-  try {
-    // 1. RÉCUPÉRATION ET NORMALISATION DES ARGUMENTS
-    // On vérifie si les arguments existent, sinon on utilise les valeurs par défaut
-    final args = Get.arguments ?? {};
-    
-    // On récupère le type d'appel (VIDEO ou AUDIO)
-    final String rawType = (args['callType'] ?? callType).toString().toUpperCase();
-    callType = rawType;
-    
-    // Déterminer si on doit activer la caméra
-    bool wantVideo = (callType == "VIDEO"); 
-    isVideoEnabled.value = wantVideo;
+    try {
+      isRinging.value = false;
+      isCallActive.value = true;
 
-    print("📞 === INITIALISATION APPEL ===");
-    print("   Type: $callType | Vidéo: $wantVideo | Est l'appelant: $isCaller");
+      bool wantVideo = (callType == "VIDEO");
+      isVideoEnabled.value = wantVideo;
 
-    // 2. CONFIGURATION AUDIO
-    // Active le haut-parleur automatiquement pour la vidéo, sinon reste sur l'écouteur
-    await Helper.setSpeakerphoneOn(wantVideo);
-    
-    isRinging.value = false;
-    isCallActive.value = true;
-    callStatus.value = isCaller ? "Appel en cours..." : "Connexion...";
+      await Helper.setSpeakerphoneOn(true);
 
-    // 3. RÉCUPÉRATION DU STREAM LOCAL (Micro + Caméra si besoin)
-    localStream = await _webRTCService.getUserMedia(hasVideo: wantVideo);
-    
-    // Attacher le flux à l'aperçu local
-    if (wantVideo) {
-      localRenderer.srcObject = localStream;
-      print("✅ Stream local attaché au renderer vidéo");
-    } else {
-      localRenderer.srcObject = null;
-      print("✅ Mode audio uniquement (pas de caméra)");
-    }
-
-    // 4. CRÉATION DE LA PEERCONNECTION
-    peerConnection = await _webRTCService.createPeerConnectionInstance(
-      localStream: localStream,
-      onRemoteStream: (stream) {
-        print("📥 Flux distant reçu !");
-        
-        // Attacher le flux distant au renderer
-        remoteRenderer.srcObject = stream;
-        
-        // Activer les pistes audio distantes pour entendre l'interlocuteur
-        for (var track in stream.getAudioTracks()) {
-          track.enabled = true;
-          print("🔊 Piste audio distante activée: ${track.id}");
-        }
-        
-        // Afficher la vidéo distante si c'est un appel vidéo
-        isRemoteVideoAvailable.value = wantVideo;
-        print("✅ Stream distant configuré (Audio: ${stream.getAudioTracks().length})");
-      },
-      onIceCandidate: (candidate) {
-        print("🧊 ICE Candidate généré, envoi au serveur...");
-        _sendSignaling('ice_candidate', {
-          'candidate': candidate.candidate,
-          'sdpMid': candidate.sdpMid,
-          'sdpMLineIndex': candidate.sdpMLineIndex,
-        });
-      },
-    );
-
-    // 5. NÉGOCIATION SDP (OFFER / ANSWER)
-    if (isCaller) {
-      // --- CAS APPELANT ---
-      print("📤 Création de l'offre SDP...");
-      final offer = await _webRTCService.createOffer(
-        peerConnection!,
-        hasVideo: wantVideo,
-      );
+      localStream = await _webRTCService.getUserMedia(hasVideo: wantVideo);
       
-      _sendSignaling('call_offer', {
-        'sdp': offer.sdp,
-        'call_type': callType,
-      });
-      print("✅ Offre envoyée avec succès");
+      if (wantVideo) {
+        localRenderer.srcObject = localStream;
+      }
 
-    } else {
-      // --- CAS DESTINATAIRE (RÉPONDEUR) ---
-      // On récupère le SDP de l'offre envoyé par le MainShellController
-      final String? sdpToUse = args['remoteSdp'] ?? pendingRemoteSdp;
+      peerConnection = await _webRTCService.createPeerConnectionInstance(
+        localStream: localStream,
+        onRemoteStream: (stream) {
+          remoteRenderer.srcObject = stream;
+          
+          for (var track in stream.getAudioTracks()) {
+            track.enabled = true;
+          }
+          
+          isRemoteVideoAvailable.value = stream.getVideoTracks().isNotEmpty;
+          isCallConnected.value = true;
+          callStatus.value = "Connecté";
+          _startTimer();
+        },
+        onIceCandidate: (candidate) {
+          _sendSignaling('ice_candidate', {
+            'candidate': candidate.candidate,
+            'sdpMid': candidate.sdpMid,
+            'sdpMLineIndex': candidate.sdpMLineIndex,
+          });
+        },
+      );
 
-      if (sdpToUse != null) {
-        print("📥 Application de l'offre distante...");
-        await peerConnection!.setRemoteDescription(
-          RTCSessionDescription(sdpToUse, 'offer')
+      if (isCaller) {
+        final offer = await _webRTCService.createOffer(
+          peerConnection!, 
+          hasVideo: wantVideo,
         );
         
-        print("📝 Création de la réponse (Answer)...");
-        final answer = await _webRTCService.createAnswer(peerConnection!);
-        
-        _sendSignaling('call_accepted', {
-          'sdp': answer.sdp
+        _sendSignaling('call_offer', {
+          'sdp': offer.sdp,
+          'call_type': callType,
         });
-        
-        // Une fois la connexion établie, on traite les candidats ICE qui étaient en attente
-        _processQueuedCandidates();
-        
-        callStatus.value = "En communication";
-        print("✅ Réponse envoyée, appel connecté");
       } else {
-        throw "Erreur : Aucun SDP distant (offre) n'a été trouvé.";
+        final String? sdpToUse = Get.arguments['sdp'] ?? pendingRemoteSdp;
+        
+        if (sdpToUse != null && sdpToUse.isNotEmpty) {
+          await peerConnection!.setRemoteDescription(
+            RTCSessionDescription(sdpToUse, 'offer')
+          );
+          
+          final answer = await _webRTCService.createAnswer(peerConnection!);
+          
+          _sendSignaling('call_accepted', {'sdp': answer.sdp});
+          
+          _processQueuedCandidates();
+        } else {
+          throw Exception('SDP distant manquant');
+        }
       }
+      
+    } catch (e) {
+      _cleanupCall();
+      Get.back();
+      Get.snackbar('Erreur', 'La connexion a échoué');
     }
-    
-    print("📞 === APPEL INITIALISÉ AVEC SUCCÈS ===");
-    
-  } catch (e, stackTrace) {
-    print("❌ Erreur CRITIQUE initCall: $e");
-    print(stackTrace);
-    callStatus.value = "Erreur de connexion";
-    _cleanupCall();
   }
-}
 
   void _handleAnswer(String sdp) async {
-    if (peerConnection != null) {
-      final remoteDesc = await peerConnection!.getRemoteDescription();
-      if (remoteDesc == null) {
+    try {
+      if (peerConnection != null) {
         await peerConnection!.setRemoteDescription(
           RTCSessionDescription(sdp, 'answer')
         );
+        
         _processQueuedCandidates();
-        callStatus.value = "En cours";
       }
+    } catch (e) {
+      print('Erreur _handleAnswer: $e');
     }
   }
 
   void _handleIceCandidate(Map<String, dynamic> payload) async {
-    final candidate = RTCIceCandidate(
-      payload['candidate'], 
-      payload['sdpMid'], 
-      payload['sdpMLineIndex']
-    );
-
-    if (peerConnection != null && (await peerConnection!.getRemoteDescription()) != null) {
-      await peerConnection!.addCandidate(candidate);
-    } else {
-      _iceCandidatesQueue.add(candidate);
+    try {
+      final candidate = RTCIceCandidate(
+        payload['candidate'],
+        payload['sdpMid'],
+        payload['sdpMLineIndex'],
+      );
+      
+      if (peerConnection != null && 
+          (await peerConnection!.getRemoteDescription()) != null) {
+        await peerConnection!.addCandidate(candidate);
+      } else {
+        _iceCandidatesQueue.add(candidate);
+      }
+    } catch (e) {
+      print('Erreur ICE: $e');
     }
   }
 
   void _processQueuedCandidates() async {
-    for (var cand in _iceCandidatesQueue) {
-      await peerConnection!.addCandidate(cand);
+    if (_iceCandidatesQueue.isNotEmpty && peerConnection != null) {
+      for (var cand in _iceCandidatesQueue) {
+        try {
+          await peerConnection!.addCandidate(cand);
+        } catch (e) {
+          print(' Erreur ajout candidate: $e');
+        }
+      }
+      _iceCandidatesQueue.clear();
     }
-    _iceCandidatesQueue.clear();
   }
 
   void _sendSignaling(String type, Map<String, dynamic> data) {
-    if (currentConversationId == null) return;
     _wsService.sendCallSignal(
       targetId: targetUserId,
-      conversationId: currentConversationId!,
+      conversationId: conversationId,
       action: type,
       extraData: data,
     );
   }
 
-  // --- ACTIONS ---
+  void _startTimer() {
+    _callTimer?.cancel();
+    _secondsElapsed = 0;
+    
+    _callTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _secondsElapsed++;
+      int minutes = _secondsElapsed ~/ 60;
+      int seconds = _secondsElapsed % 60;
+      callDuration.value = 
+        "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
+    });
+  }
 
   Future<void> acceptCall() async {
     await initCall(false);
@@ -336,39 +268,49 @@ void _handleIncomingCall(Map<String, dynamic> payload) {
   void toggleMic() {
     if (localStream != null) {
       isMicEnabled.value = !isMicEnabled.value;
-      localStream!.getAudioTracks().forEach((t) => t.enabled = isMicEnabled.value);
-    }
-  }
-
-  void toggleVideo() {
-    if (localStream != null && callType == "VIDEO") {
-      isVideoEnabled.value = !isVideoEnabled.value;
-      localStream!.getVideoTracks().forEach((t) => t.enabled = isVideoEnabled.value);
+      
+      for (var track in localStream!.getAudioTracks()) {
+        track.enabled = isMicEnabled.value;
+      }
     }
   }
 
   Future<void> switchCamera() async {
     if (localStream != null && isVideoEnabled.value) {
-      final videoTrack = localStream!.getVideoTracks().first;
-      await Helper.switchCamera(videoTrack);
+      try {
+        final videoTrack = localStream!.getVideoTracks().first;
+        await Helper.switchCamera(videoTrack);
+      } catch (e) {
+        print("Erreur switchCamera: $e");
+      }
     }
   }
 
-  Future<void> _cleanupCall() async {
-    isCallActive.value = false;
-    isRinging.value = false;
-    
-    localStream?.getTracks().forEach((t) => t.stop());
-    localStream?.dispose();
-    localStream = null;
+    void _startAudioLevelMonitoring() {
+    Timer.periodic(const Duration(milliseconds: 200), (timer) {
+      if (!isCallActive.value || !isCallConnected.value) {
+        timer.cancel();
+        return;
+      }
+      
+      audioLevel.value = 0.3 + (0.7 * (DateTime.now().millisecondsSinceEpoch % 1000) / 1000);
+    });
+  }
 
-    await peerConnection?.close();
-    await peerConnection?.dispose();
-    peerConnection = null;
-    
-    localRenderer.srcObject = null;
-    remoteRenderer.srcObject = null;
-    _iceCandidatesQueue.clear();
+  Future<void> _cleanupCall() async {
+    try {
+      _callTimer?.cancel();
+      
+      localStream?.getTracks().forEach((t) => t.stop());
+      await peerConnection?.close();
+      peerConnection = null;
+      
+      isCallActive.value = false;
+      isCallConnected.value = false;
+      
+    } catch (e) {
+      print('Erreur cleanup: $e');
+    }
   }
 
   @override
@@ -377,6 +319,12 @@ void _handleIncomingCall(Map<String, dynamic> payload) {
     _cleanupCall();
     localRenderer.dispose();
     remoteRenderer.dispose();
+    
     super.onClose();
   }
-} 
+}
+
+
+
+
+
