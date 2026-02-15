@@ -5,7 +5,6 @@ import 'package:chat_mobile/data/models/conversation.dart';
 import 'package:chat_mobile/modules/auth/auth_binding.dart';
 import 'package:chat_mobile/modules/auth/views/login_view.dart';
 import 'package:chat_mobile/modules/auth/views/register_view.dart';
-import 'package:chat_mobile/modules/auth/views/restore_view.dart';
 import 'package:chat_mobile/modules/chat/calls_binding.dart';
 import 'package:chat_mobile/modules/chat/controllers/chat_controller.dart';
 import 'package:chat_mobile/modules/chat/views/biometric_guard.dart';
