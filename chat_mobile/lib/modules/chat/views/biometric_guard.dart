@@ -20,10 +20,10 @@ class _BiometricGuardState extends State<BiometricGuard> with WidgetsBindingObse
   bool _isAuthenticated = false;
   bool _isLoading = true;
   DateTime? _lastAuthenticationTime;
-  DateTime? _lastPausedTime;  // ✅ NOUVEAU: Timestamp de la mise en pause
+  DateTime? _lastPausedTime;  // NOUVEAU: Timestamp de la mise en pause
   bool _isAuthenticating = false;
   
-  // ✅ Délai avant de redemander auth (en secondes)
+  // Délai avant de redemander auth (en secondes)
   static const int _reAuthDelaySeconds = 60;  // 1 minute
   static const int _pauseThresholdSeconds = 3;  // 3 secondes de pause minimum
 
@@ -46,13 +46,13 @@ class _BiometricGuardState extends State<BiometricGuard> with WidgetsBindingObse
     
     switch (state) {
       case AppLifecycleState.paused:
-        // ✅ App mise en pause (arrière-plan)
+        // App mise en pause (arrière-plan)
         _lastPausedTime = DateTime.now();
-        print('⏸️ App paused at: $_lastPausedTime');
+        print(' App paused at: $_lastPausedTime');
         break;
         
       case AppLifecycleState.resumed:
-        // ✅ App revenue au premier plan
+        //  App revenue au premier plan
         _handleAppResumed();
         break;
         
@@ -64,33 +64,33 @@ class _BiometricGuardState extends State<BiometricGuard> with WidgetsBindingObse
   void _handleAppResumed() {
     final now = DateTime.now();
     
-    // 1. Vérifier si on a une authentification récente (< 60s)
+    //  Vérifier si on a une authentification récente (< 60s)
     if (_lastAuthenticationTime != null) {
       final timeSinceAuth = now.difference(_lastAuthenticationTime!);
       
       if (timeSinceAuth.inSeconds < _reAuthDelaySeconds) {
-        print('⏭️ Auth récente (${timeSinceAuth.inSeconds}s) - Ignorer');
+        print(' Auth récente (${timeSinceAuth.inSeconds}s) - Ignorer');
         _lastPausedTime = null;  // Reset pause timestamp
         return;
       }
     }
     
-    // 2. Vérifier si l'app a vraiment été en pause (pas juste navigation)
+    //  Vérifier si l'app a vraiment été en pause (pas juste navigation)
     if (_lastPausedTime != null) {
       final pauseDuration = now.difference(_lastPausedTime!);
       
       if (pauseDuration.inSeconds < _pauseThresholdSeconds) {
-        print('⏭️ Pause courte (${pauseDuration.inSeconds}s) - Navigation interne, ignorer');
+        print('Pause courte (${pauseDuration.inSeconds}s) - Navigation interne, ignorer');
         _lastPausedTime = null;
         return;
       }
       
-      print('🔐 App en pause pendant ${pauseDuration.inSeconds}s - Redemander auth');
+      print('App en pause pendant ${pauseDuration.inSeconds}s - Redemander auth');
     }
     
-    // 3. Redemander authentification si pas déjà en cours
+    // Redemander authentification si pas déjà en cours
     if (!_isAuthenticating && !_isLoading) {
-      print('🔐 App resumed - Redemander authentification');
+      print(' App resumed - Redemander authentification');
       setState(() {
         _isAuthenticated = false;
         _isLoading = true;
@@ -103,7 +103,7 @@ class _BiometricGuardState extends State<BiometricGuard> with WidgetsBindingObse
 
   Future<void> _authenticateUser() async {
     if (_isAuthenticating) {
-      print('⏭️ Authentification déjà en cours - Ignorer');
+      print('Authentification déjà en cours - Ignorer');
       return;
     }
     
@@ -121,7 +121,7 @@ class _BiometricGuardState extends State<BiometricGuard> with WidgetsBindingObse
           _isAuthenticating = false;
         });
         
-        print('✅ Authentification complète - MainShellView affiché');
+        print(' Authentification complète - MainShellView affiché');
         break;
         
       case BiometricResult.notAvailable:

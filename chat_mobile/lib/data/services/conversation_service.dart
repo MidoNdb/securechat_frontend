@@ -5,14 +5,14 @@ import '../api/api_endpoints.dart';
 import '../api/dio_client.dart';
 import '../models/conversation.dart';
 
-/// Service de gestion des conversations
+// Service de gestion des conversations
 class ConversationService extends GetxService {
   final DioClient _dioClient = Get.find<DioClient>();
   
-  /// Récupérer toutes les conversations
+  // Récupérer toutes les conversations
   Future<List<Conversation>> getConversations() async {
     try {
-      print('📥 Récupération conversations...');
+      print('Récupération conversations...');
       
       final response = await _dioClient.privateDio.get(ApiEndpoints.conversations);
       
@@ -22,7 +22,7 @@ class ConversationService extends GetxService {
             .map((json) => Conversation.fromJson(json))
             .toList();
         
-        print('✅ ${conversations.length} conversations récupérées');
+        print(' ${conversations.length} conversations récupérées');
         
         return conversations;
       } else {
@@ -30,12 +30,12 @@ class ConversationService extends GetxService {
       }
       
     } catch (e) {
-      print('❌ Erreur getConversations: $e');
+      print(' Erreur getConversations: $e');
       rethrow;
     }
   }
   
-  /// Récupérer une conversation par ID
+  // Récupérer une conversation par ID
   Future<Conversation> getConversation(String id) async {
     try {
       final response = await _dioClient.privateDio.get(
@@ -49,18 +49,18 @@ class ConversationService extends GetxService {
       }
       
     } catch (e) {
-      print('❌ Erreur getConversation: $e');
+      print('Erreur getConversation: $e');
       rethrow;
     }
   }
   
-  /// Créer une conversation
+  //Créer une conversation
   Future<Conversation> createConversation({
     required String participantId,
     String type = 'DIRECT',
   }) async {
     try {
-      print('📝 Création conversation avec: $participantId');
+      print(' Création conversation avec: $participantId');
       
       final response = await _dioClient.privateDio.post(
         ApiEndpoints.createConversation,
@@ -72,14 +72,14 @@ class ConversationService extends GetxService {
       
       if (response.statusCode == 201) {
         final conversation = Conversation.fromJson(response.data['data']);
-        print('✅ Conversation créée: ${conversation.id}');
+        print('Conversation créée: ${conversation.id}');
         return conversation;
       } else {
         throw Exception('Erreur création conversation: ${response.statusCode}');
       }
       
     } catch (e) {
-      print('❌ Erreur createConversation: $e');
+      print(' Erreur createConversation: $e');
       rethrow;
     }
   }

@@ -82,7 +82,7 @@ Widget _buildContactCard(Map<String, dynamic> contact) {
       title: Text(displayName),
       subtitle: Text(phoneNumber),
       trailing: const Icon(Icons.chevron_right),
-      onTap: () => controller.onContactTap(contact),  // ✅ Méthode du controller
+      onTap: () => controller.onContactTap(contact),  //  Méthode du controller
     ),
   );
 }
@@ -155,7 +155,7 @@ void _showAddContactDialog() {
               onPressed: isAdding.value
                   ? null
                   : () async {
-                      print('🔘 Add button pressed');
+                      print('Add button pressed');
                       print('   Nickname: "${nicknameController.text.trim()}"');
                       
                       isAdding.value = true;
@@ -167,18 +167,18 @@ void _showAddContactDialog() {
                         nickname: nicknameController.text.trim(),
                       );
 
-                      print('📋 Add result: $success');
+                      print(' Add result: $success');
 
                       if (success) {
-                        print('✅ Closing dialog');
-                        // ✅ CORRECTION: Fermer AVANT de changer isAdding
+                        print(' Closing dialog');
+                        //  CORRECTION: Fermer AVANT de changer isAdding
                         // Get.back();
                         Navigator.of(Get.context!).pop();
-                        // ✅ Attendre que le dialogue soit fermé
+                        // Attendre que le dialogue soit fermé
                         await Future.delayed(const Duration(milliseconds: 100));
                         isAdding.value = false;
                       } else {
-                        print('❌ Failed to add');
+                        print('Failed to add');
                         isAdding.value = false;
                       }
                     },
@@ -204,7 +204,7 @@ void _showAddContactDialog() {
                 : () async {
                     if (phoneController.text.isEmpty) {
                       Get.snackbar(
-                        '❌',
+                        '',
                         'Entrez un numéro',
                         backgroundColor: Colors.red.withOpacity(0.1),
                         colorText: Colors.red,
@@ -215,17 +215,17 @@ void _showAddContactDialog() {
                     isChecking.value = true;
                     
                     final fullPhone = countryCode.value + phoneController.text;
-                    print('🔍 Checking phone: $fullPhone');
+                    print(' Checking phone: $fullPhone');
                     
                     final user = await controller.checkPhoneExists(fullPhone);
 
                     isChecking.value = false;
 
                     if (user != null) {
-                      print('✅ User found: ${user['display_name']}');
+                      print(' User found: ${user['display_name']}');
                       userFound.value = user;
                     } else {
-                      print('❌ User not found');
+                      print(' User not found');
                       Get.snackbar(
                         '',
                         'Ce numéro n\'utilise pas l\'application',
@@ -283,13 +283,13 @@ Widget _buildConfirmationStep(
       TextField(
         controller: nicknameController,
         decoration: const InputDecoration(
-          labelText: 'Nom du contact',  // ✅ Retirer "(optionnel)"
+          labelText: 'Nom du contact',  //  Retirer "(optionnel)"
           hintText: 'Mon ami, Collègue, Papa...',
           border: OutlineInputBorder(),
           prefixIcon: Icon(Icons.person),
         ),
         textCapitalization: TextCapitalization.words,
-        autofocus: true,  // ✅ Auto-focus pour faciliter saisie
+        autofocus: true,  // Auto-focus pour faciliter saisie
       ),
       const SizedBox(height: 8),
       Text(
@@ -334,7 +334,7 @@ Widget _buildConfirmationStep(
               child: TextField(
                 controller: phoneController,
                 decoration: const InputDecoration(
-                  hintText: '44010447',
+                  hintText: '',
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.phone,

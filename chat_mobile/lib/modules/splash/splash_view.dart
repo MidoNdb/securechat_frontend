@@ -9,11 +9,11 @@ class SplashView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('🎨 SplashView: build() appelé');
+    print('SplashView: build() appelé');
     
-    // ✅ Forcer la récupération du controller
+    // Forcer la récupération du controller
     final controller = Get.find<SplashController>();
-    print('🎨 SplashView: Controller trouvé: ${controller != null}');
+    print(' SplashView: Controller trouvé: ${controller != null}');
     
     return Scaffold(
       body: Container(
@@ -66,7 +66,7 @@ class SplashView extends StatelessWidget {
               
               SizedBox(height: 16),
               
-              // ✅ Texte de debug
+              // Texte de debug
               Text(
                 'Version 1.0.0',
                 style: TextStyle(

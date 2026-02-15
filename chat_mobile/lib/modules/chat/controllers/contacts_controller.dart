@@ -188,7 +188,7 @@ void onContactTap(Map<String, dynamic> contact) {
   
   print(' Contact selected: $contactName ($contactUserId)');
   
-  // ✅ Appelle MessagesController pour gérer la navigation
+  // Appelle MessagesController pour gérer la navigation
   final messagesController = Get.find<MessagesController>();
   messagesController.openOrCreateConversation(
     contactUserId: contactUserId,

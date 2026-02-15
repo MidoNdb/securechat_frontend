@@ -13,7 +13,7 @@ class ContactService extends GetxService {
     _dioClient = Get.find<DioClient>();
   }
 
-  // 1. Vérifier si un numéro existe
+  //  Vérifier si un numéro existe
   Future<Map<String, dynamic>?> checkPhoneNumber(String phoneNumber) async {
     try {
       final response = await _dioClient.get(
@@ -38,21 +38,21 @@ class ContactService extends GetxService {
       }
       return null;
     } catch (e) {
-      print('❌ checkPhoneNumber: $e');
+      print(' checkPhoneNumber: $e');
       return null;
     }
   }
 
-// 2. Ajouter un contact
+//  Ajouter un contact
 Future<Map<String, dynamic>?> addContact({
   required String phoneNumber,
   required String nickname,
   String? notes,
 }) async {
   try {
-    print('📤 Adding contact:');
+    print(' Adding contact:');
     print('   Phone: $phoneNumber');
-    print('   Nickname: "$nickname"');  // ✅ Guillemets pour voir si vide
+    print('   Nickname: "$nickname"');  // Guillemets pour voir si vide
     print('   Notes: "$notes"');
     
     final response = await _dioClient.post(
@@ -64,28 +64,28 @@ Future<Map<String, dynamic>?> addContact({
       },
     );
 
-    print('📥 Response status: ${response.statusCode}');
-    print('📥 Response data: ${response.data}');
+    print(' Response status: ${response.statusCode}');
+    print(' Response data: ${response.data}');
 
     if (response.statusCode == 201 || response.statusCode == 200) {
       final data = response.data;
       if (data['success'] == true) {
-        print('✅ Contact added successfully');
+        print(' Contact added successfully');
         print('   Display name: ${data['data']['display_name']}');
         print('   Nickname: ${data['data']['nickname']}');
         return data['data'];
       }
     }
     
-    print('⚠️ Unexpected response format');
+    print(' Unexpected response format');
     return null;
   } catch (e) {
-    print('❌ addContact error: $e');
+    print(' addContact error: $e');
     rethrow;
   }
 }
 
-  // 3. Charger tous les contacts
+  //  Charger tous les contacts
   Future<List<Map<String, dynamic>>> getContacts({
     bool? favorites,
     bool? blocked,
@@ -111,7 +111,7 @@ Future<Map<String, dynamic>?> addContact({
       }
       return [];
     } catch (e) {
-      print('❌ getContacts: $e');
+      print(' getContacts: $e');
       return [];
     }
   }
@@ -127,12 +127,12 @@ Future<Map<String, dynamic>?> addContact({
 
       return response.statusCode == 200;
     } catch (e) {
-      print('❌ toggleBlock: $e');
+      print(' toggleBlock: $e');
       return false;
     }
   }
 
-  // 5. Toggle favoris
+  //  Toggle favoris
   Future<bool> toggleFavorite(String contactId) async {
     try {
       final response = await _dioClient.post(
@@ -142,7 +142,7 @@ Future<Map<String, dynamic>?> addContact({
 
       return response.statusCode == 200;
     } catch (e) {
-      print('❌ toggleFavorite: $e');
+      print(' toggleFavorite: $e');
       return false;
     }
   }
@@ -156,7 +156,7 @@ Future<Map<String, dynamic>?> addContact({
 
       return response.statusCode == 200 || response.statusCode == 204;
     } catch (e) {
-      print('❌ deleteContact: $e');
+      print(' deleteContact: $e');
       return false;
     }
   }

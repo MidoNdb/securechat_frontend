@@ -16,7 +16,7 @@ class MainShellView extends GetView<MainShellController> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // ✅ Gère le retour dans les navigators imbriqués
+        //  Gère le retour dans les navigators imbriqués
         final currentIndex = controller.currentIndex.value;
         final navigator = controller.navigatorKeys[currentIndex].currentState;
         
@@ -31,7 +31,7 @@ class MainShellView extends GetView<MainShellController> {
         body: Obx(() => IndexedStack(
           index: controller.currentIndex.value,
           children: [
-            // ✅ Chaque page a son propre Navigator
+            //  Chaque page a son propre Navigator
             _buildNavigator(0, const MessagesView()),
             _buildNavigator(1, const ContactsView()),
             _buildNavigator(2,  CallsListView()),
@@ -43,7 +43,7 @@ class MainShellView extends GetView<MainShellController> {
     );
   }
 
-  // ✅ Navigator imbriqué pour chaque onglet
+  // Navigator imbriqué pour chaque onglet
   Widget _buildNavigator(int index, Widget child) {
     return Navigator(
       key: controller.navigatorKeys[index],

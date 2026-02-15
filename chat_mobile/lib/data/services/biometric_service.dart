@@ -28,13 +28,13 @@ class BiometricService extends GetxService {
       final canCheck = await canCheckBiometrics();
       final types = await getAvailableBiometrics();
       
-      print('📱 Device supporté: $deviceSupported');
-      print('🔍 Peut vérifier: $canCheck');
-      print('🔐 Types dispo: $types');
+      print(' Device supporté: $deviceSupported');
+      print(' Peut vérifier: $canCheck');
+      print(' Types dispo: $types');
       
       return deviceSupported && canCheck && types.isNotEmpty;
     } catch (e) {
-      print('❌ Erreur biométrie: $e');
+      print(' Erreur biométrie: $e');
       return false;
     }
   }
@@ -55,15 +55,15 @@ class BiometricService extends GetxService {
         final deviceSupported = await isDeviceSupported();
         
         if (!deviceSupported) {
-          print('⚠️ Appareil sans biométrie - Accès autorisé');
+          print(' Appareil sans biométrie - Accès autorisé');
           return BiometricResult.notAvailable;
         } else {
-          print('⚠️ Biométrie non configurée');
+          print(' Biométrie non configurée');
           return BiometricResult.notConfigured;
         }
       }
       
-      print('🔐 Demande authentification biométrique...');
+      print(' Demande authentification biométrique...');
       
       final authenticated = await _auth.authenticate(
         localizedReason: 'Authentifiez-vous pour accéder à SecureChat',
@@ -74,15 +74,15 @@ class BiometricService extends GetxService {
       );
       
       if (authenticated) {
-        print('✅ Authentification réussie');
+        print(' Authentification réussie');
         return BiometricResult.success;
       } else {
-        print('❌ Authentification échouée');
+        print('Authentification échouée');
         return BiometricResult.failed;
       }
       
     } catch (e) {
-      print('❌ Erreur authentification: $e');
+      print(' Erreur authentification: $e');
       return BiometricResult.error;
     }
   }

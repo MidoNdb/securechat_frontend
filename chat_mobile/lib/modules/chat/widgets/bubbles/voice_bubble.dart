@@ -1,5 +1,4 @@
-// lib/modules/chat/widgets/bubbles/voice_bubble.dart
-// ✅ VERSION AMÉLIORÉE - Style WhatsApp avec couleurs de l'app
+
 
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -76,7 +75,7 @@ class _VoiceBubbleState extends State<VoiceBubble>
       }
       
     } catch (e) {
-      print('❌ Erreur init audio: $e');
+      print(' Erreur init audio: $e');
     } finally {
       isLoading.value = false;
     }
@@ -123,7 +122,7 @@ class _VoiceBubbleState extends State<VoiceBubble>
       }
       
     } catch (e) {
-      print('❌ Erreur lecture: $e');
+      print(' Erreur lecture: $e');
       Get.snackbar(
         'Erreur',
         'Impossible de lire le message vocal',

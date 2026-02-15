@@ -1,5 +1,4 @@
-// lib/modules/chat/widgets/inputs/audio_recorder_widget.dart
-// ✅ VERSION AMÉLIORÉE - Interface moderne style WhatsApp
+
 
 import 'dart:async';
 import 'package:flutter/material.dart';

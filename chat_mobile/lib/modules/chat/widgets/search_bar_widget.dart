@@ -80,7 +80,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
             Icons.search,
             color: Colors.grey[600],
           ),
-          // ✅ Afficher l'icône X seulement s'il y a du texte
+          // Afficher l'icône X seulement s'il y a du texte
           suffixIcon: _hasText
               ? IconButton(
                   icon: Icon(

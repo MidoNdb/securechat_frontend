@@ -1,11 +1,4 @@
-// lib/data/services/crypto_isolate.dart
-//
-// Fonctions top-level pures pour exécution dans des Isolates.
-// Règle Dart : compute() exige des fonctions top-level ou static,
-// et tous les paramètres doivent être sérialisables (pas de classes complexes).
-//
-// Les instances X25519(), Ed25519(), AesGcm() sont recréées dans l'Isolate
-// car elles ne sont pas transférables entre Isolates.
+
 
 import 'dart:convert';
 import 'dart:typed_data';
@@ -155,26 +148,26 @@ Future<Map<String, String>> isolateEncryptMessage(EncryptParams params) async {
   final aesGcm = AesGcm.with256bits();
   final sha256Algo = Sha256();
 
-  // 1. DH shared secret
+  //  DH shared secret
   final sharedSecretBytes = await _computeSharedSecretInternal(
     x25519,
     params.myDhPrivateKeyB64,
     params.theirDhPublicKeyB64,
   );
 
-  // 2. HKDF derive AES key
+  //  HKDF derive AES key
   final aesKeyBytes = await _deriveAESKeyInternal(sha256Algo, sharedSecretBytes);
 
-  // 3. AES-GCM encrypt
+  //  AES-GCM encrypt
   final secretBox = await aesGcm.encrypt(
     utf8.encode(params.plaintext),
     secretKey: SecretKey(aesKeyBytes),
   );
 
-  // 4. SHA-256 hash of ciphertext
+  //  SHA-256 hash of ciphertext
   final ciphertextHash = await sha256Algo.hash(secretBox.cipherText);
 
-  // 5. Ed25519 sign
+  //  Ed25519 sign
   final signatureB64 = await _signDataInternal(
     ed25519,
     ciphertextHash.bytes,
@@ -200,7 +193,7 @@ Future<String> isolateDecryptMessage(DecryptParams params) async {
   final nonce = base64Decode(params.nonceB64);
   final authTag = base64Decode(params.authTagB64);
 
-  // 1. Verify signature
+  //  Verify signature
   final ciphertextHash = await sha256Algo.hash(ciphertext);
   final isValid = await _verifySignatureInternal(
     ed25519,
@@ -213,17 +206,17 @@ Future<String> isolateDecryptMessage(DecryptParams params) async {
     throw Exception('Signature invalide - Message compromis');
   }
 
-  // 2. DH shared secret
+  // DH shared secret
   final sharedSecretBytes = await _computeSharedSecretInternal(
     x25519,
     params.myDhPrivateKeyB64,
     params.theirDhPublicKeyB64,
   );
 
-  // 3. HKDF derive AES key
+  //  HKDF derive AES key
   final aesKeyBytes = await _deriveAESKeyInternal(sha256Algo, sharedSecretBytes);
 
-  // 4. AES-GCM decrypt
+  //  AES-GCM decrypt
   final secretBox = SecretBox(ciphertext, nonce: nonce, mac: Mac(authTag));
   final decryptedBytes = await aesGcm.decrypt(
     secretBox,

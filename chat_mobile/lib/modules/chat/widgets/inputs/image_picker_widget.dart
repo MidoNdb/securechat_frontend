@@ -170,7 +170,7 @@ class ImagePickerWidget extends StatelessWidget {
       }
       
     } catch (e) {
-      print('❌ Erreur sélection galerie: $e');
+      print('Erreur sélection galerie: $e');
       _showError(context, 'Impossible d\'accéder à la galerie');
     }
   }
@@ -192,7 +192,7 @@ class ImagePickerWidget extends StatelessWidget {
       }
       
     } catch (e) {
-      print('❌ Erreur caméra: $e');
+      print(' Erreur caméra: $e');
       _showError(context, 'Impossible d\'accéder à la caméra');
     }
   }

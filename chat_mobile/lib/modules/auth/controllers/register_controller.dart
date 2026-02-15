@@ -20,7 +20,7 @@ class RegisterController extends GetxController {
   final errorMessage = ''.obs;
   final phoneE164 = ''.obs;
   final phoneIsValid = false.obs;
-  final isPhoneVerified = false.obs;  // ← NOUVEAU
+  final isPhoneVerified = false.obs;  //  NOUVEAU
   
   @override
   void onInit() {
@@ -98,20 +98,11 @@ Future<void> sendOtpAndVerify() async {
         phoneNumber: phoneE164.value,
         password: passwordController.text,
         username: usernameController.text.trim(),
-        email: null,  // ← Toujours null maintenant
+        email: null,  // Toujours null maintenant
       );
       
       Get.offAllNamed(AppRoutes.MAIN_SHELL);
-      
-      // Get.snackbar(
-      //   'Inscription réussie',
-      //   'Bienvenue ${_authService.currentUser.value?.displayName ?? ""}',
-      //   snackPosition: SnackPosition.TOP,
-      //   backgroundColor: Colors.green.withOpacity(0.1),
-      //   colorText: Colors.green,
-      //   icon: const Icon(Icons.check_circle, color: Colors.green),
-      //   duration: const Duration(seconds: 3),
-      // );
+    
       
     } catch (e) {
       _showError(_extractErrorMessage(e.toString()));

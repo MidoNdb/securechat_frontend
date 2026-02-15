@@ -50,22 +50,16 @@ class ProfileView extends GetView<ProfileController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 30), // ✅ Réduit de 40 à 30
+              SizedBox(height: 30), // Réduit de 40 à 30
               _buildAvatar(),
-              SizedBox(height: 8), // ✅ Réduit de 12 à 8
+              SizedBox(height: 8), //  Réduit de 12 à 8
               _buildUserInfo(),
             ],
           ),
         ),
        
       ),
-      // actions: [
-      //   IconButton(
-      //     icon: Icon(Icons.logout, color: Colors.white),
-      //     tooltip: 'Déconnexion',
-      //     onPressed: controller.logout,
-      //   ),
-      // ],
+     
     );
   }
 
@@ -96,17 +90,17 @@ class ProfileView extends GetView<ProfileController> {
 
   Widget _buildUserInfo() {
     return Column(
-      mainAxisSize: MainAxisSize.min, // ✅ Ajouté
+      mainAxisSize: MainAxisSize.min, // Ajouté
       children: [
         Text(
           controller.currentUser?.displayName ?? 'Utilisateur',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 20, // ✅ Réduit de 22 à 20
+            fontSize: 20, // Réduit de 22 à 20
             fontWeight: FontWeight.bold,
           ),
-          maxLines: 1, // ✅ Ajouté
-          overflow: TextOverflow.ellipsis, // ✅ Ajouté
+          maxLines: 1, //  Ajouté
+          overflow: TextOverflow.ellipsis, //  Ajouté
         ),
         SizedBox(height: 4),
         Text(
@@ -127,7 +121,7 @@ class ProfileView extends GetView<ProfileController> {
       delegate: SliverChildListDelegate([
         SizedBox(height: 20),
         
-        // ✅ Informations utilisateur
+        // Informations utilisateur
         _buildSection(
           title: 'Mon compte',
           items: [
@@ -153,7 +147,7 @@ class ProfileView extends GetView<ProfileController> {
         
         SizedBox(height: 20),
         
-        // ✅ Actions
+        //  Actions
         _buildSection(
           title: 'Actions',
           items: [
@@ -194,7 +188,7 @@ class ProfileView extends GetView<ProfileController> {
         
         SizedBox(height: 40),
         
-        // ✅ Version
+        //  Version
         Center(
           child: Text(
             'SecureChat v1.0.0',
@@ -239,7 +233,7 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // ✅ Tuile d'information (lecture seule)
+  // Tuile d'information (lecture seule)
   Widget _buildInfoTile({
     required IconData icon,
     required String title,
@@ -269,7 +263,7 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  // ✅ Tuile d'action (cliquable)
+  // Tuile d'action (cliquable)
   Widget _buildActionTile({
     required IconData icon,
     required Color iconColor,

@@ -81,7 +81,7 @@ class ProfileController extends GetxController {
       barrierDismissible: false,
     );
     
-    // 2. Si confirmé, procéder à la déconnexion
+    //  Si confirmé, procéder à la déconnexion
     if (confirmed == true) {
       try {
         isLoggingOut.value = true;
@@ -109,30 +109,22 @@ class ProfileController extends GetxController {
           barrierDismissible: false,
         );
         
-        // 3. Appeler la déconnexion
+        //  Appeler la déconnexion
         await _authService.logout();
         
-        // 4. Fermer le loading dialog
+        //  Fermer le loading dialog
         Get.back();
         
-        // 5. Naviguer vers Login et vider la pile de navigation
+        //  Naviguer vers Login et vider la pile de navigation
         Get.offAllNamed(AppRoutes.LOGIN);
         
-        // 6. Afficher message de succès
-        // Get.snackbar(
-        //   'Déconnexion réussie',
-        //   'À bientôt !',
-        //   snackPosition: SnackPosition.BOTTOM,
-        //   backgroundColor: Colors.green,
-        //   colorText: Colors.white,
-        //   icon: Icon(Icons.check_circle, color: Colors.white),
-        // );
+       
         
       } catch (e) {
         // Fermer le loading dialog en cas d'erreur
         Get.back();
         
-        print('❌ Erreur logout: $e');
+        print(' Erreur logout: $e');
         Get.snackbar(
           'Erreur',
           'Impossible de se déconnecter',

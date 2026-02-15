@@ -1,5 +1,5 @@
 // lib/modules/chat/views/chat_view.dart
-// ✅ VERSION FINALE AMÉLIORÉE - UX optimale avec tous les nouveaux widgets
+//  VERSION FINALE AMÉLIORÉE - UX optimale avec tous les nouveaux widgets
 
 import 'dart:io';
 import 'package:chat_mobile/app/routes/app_routes.dart';
@@ -142,7 +142,7 @@ final arguments = {
   'isCaller': true,
 };
     
-    print("🚀 Lancement de l'appel (${isVideo ? 'VIDEO' : 'AUDIO'}) vers $targetId");
+    print(" Lancement de l'appel (${isVideo ? 'VIDEO' : 'AUDIO'}) vers $targetId");
     Get.toNamed(AppRoutes.CALLS, arguments: arguments);
   }
 

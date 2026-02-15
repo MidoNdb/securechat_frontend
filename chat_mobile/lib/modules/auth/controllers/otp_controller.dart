@@ -73,16 +73,6 @@ class OtpController extends GetxController {
       
       startCountdown();
       
-      // Get.snackbar(
-      //   'Code envoyé',
-      //   'Un code de vérification a été envoyé par SMS',
-      //   snackPosition: SnackPosition.TOP,
-      //   backgroundColor: Colors.green.withOpacity(0.1),
-      //   colorText: Colors.green,
-      //   icon: const Icon(Icons.check_circle, color: Colors.green),
-      //   duration: const Duration(seconds: 3),
-      // );
-      
     } catch (e) {
       Get.snackbar(
         '',
@@ -114,14 +104,7 @@ Future<bool> verifyOtpSimple() async {
     final response = await _otpService.verifyOtp(phoneNumberClean.value, code);
     
     if (response['success'] == true) {
-      // Get.snackbar(
-      //   'Vérifié',
-      //   'Numéro vérifié avec succès',
-      //   snackPosition: SnackPosition.TOP,
-      //   backgroundColor: Colors.green.withOpacity(0.1),
-      //   colorText: Colors.green,
-      //   duration: const Duration(milliseconds: 500),
-      // );
+      
       
       await Future.delayed(const Duration(milliseconds: 300));
       return true;
@@ -137,14 +120,4 @@ Future<bool> verifyOtpSimple() async {
     isLoading.value = false;
   }
 }
-  
-  // String _extractError(dynamic error) {
-  //   final errorStr = error.toString();
-  //   if (errorStr.contains('Exception:')) {
-  //     return errorStr.split('Exception:').last.trim();
-  //   }
-  //   return errorStr.length > 100 
-  //       ? 'Une erreur est survenue' 
-  //       : errorStr;
-  // }
 }

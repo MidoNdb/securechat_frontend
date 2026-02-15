@@ -34,9 +34,9 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.INITIAL,
-      page: () => const BiometricGuard(), // ✅ Wrapper avec biométrie
+      page: () => const BiometricGuard(), // Wrapper avec biométrie
       binding: ChatBinding(),
-      // ❌ Supprimer BiometricMiddleware si tu l'avais
+      //  Supprimer BiometricMiddleware si tu l'avais
     ),
     GetPage(
       name: AppRoutes.LOGIN,
@@ -60,7 +60,7 @@ class AppPages {
      GetPage(
       name: AppRoutes.CALLS,
       page: () => const CallsView(),
-      binding: CallsBinding(), // ✅ Binding dédié pour les appels
+      binding: CallsBinding(), // Binding dédié pour les appels
     ),
     
 

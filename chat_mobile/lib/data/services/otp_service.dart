@@ -20,7 +20,7 @@ class OtpService extends GetxService {
   }
   
   /// Vérifie le code OTP
-  /// ✅ CORRECTION: Retourner la réponse complète
+  ///  CORRECTION: Retourner la réponse complète
   Future<Map<String, dynamic>> verifyOtp(String phoneNumber, String code) async {
     final response = await _dioClient.post(
       ApiEndpoints.verifyOtp(),
@@ -30,7 +30,7 @@ class OtpService extends GetxService {
       },
     );
     
-    // ✅ Retourner la réponse complète
+    // Retourner la réponse complète
     return response.data;
   }
 }

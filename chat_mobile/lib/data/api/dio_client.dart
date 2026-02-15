@@ -25,22 +25,22 @@ class DioClient extends GetxService {
       },
     );
 
-    // 🔓 PUBLIC (sans token)
+    // PUBLIC (sans token)
     _publicDio = Dio(baseOptions);
     _publicDio.interceptors.addAll([
       LoggingInterceptor(),
       ErrorInterceptor(),
     ]);
 
-    // 🔐 PRIVATE (avec token)
+    // PRIVATE (avec token)
     _privateDio = Dio(baseOptions);
     _privateDio.interceptors.addAll([
-      AuthInterceptor(), // 🔥 IMPORTANT
+      AuthInterceptor(), 
       LoggingInterceptor(),
       ErrorInterceptor(),
     ]);
 
-    // ⬆️ UPLOAD (avec token)
+    //  UPLOAD (avec token)
     _uploadDio = Dio(
       baseOptions.copyWith(
         connectTimeout: const Duration(minutes: 5),
@@ -58,9 +58,9 @@ class DioClient extends GetxService {
       ErrorInterceptor(),
     ]);
 
-    print('✅ DioClient initialized');
-    print('🌍 BaseURL: ${ApiEndpoints.baseUrl}');
-    print('📍 Environment: ${AppEnvironment.name}');
+    print(' DioClient initialized');
+    print(' BaseURL: ${ApiEndpoints.baseUrl}');
+    print(' Environment: ${AppEnvironment.name}');
 
     return this;
   }
@@ -68,7 +68,7 @@ class DioClient extends GetxService {
   Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) =>
       _privateDio.get(path, queryParameters: queryParameters);
 
-  // ✅ CORRECTION: Suppression du paramètre inutile Map<String, int> map
+  //  CORRECTION: Suppression du paramètre inutile Map<String, int> map
   Future<Response> post(String path, {dynamic data}) =>
       _privateDio.post(path, data: data);
 
@@ -115,6 +115,6 @@ class DioClient extends GetxService {
     _publicDio.options.baseUrl = newBaseUrl;
     _privateDio.options.baseUrl = newBaseUrl;
     _uploadDio.options.baseUrl = newBaseUrl;
-    print('✅ BaseURL updated: $newBaseUrl');
+    print(' BaseURL updated: $newBaseUrl');
   }
 }

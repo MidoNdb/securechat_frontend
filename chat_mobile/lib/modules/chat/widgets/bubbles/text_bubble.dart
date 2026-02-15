@@ -1,5 +1,4 @@
-// lib/modules/chat/widgets/bubbles/text_bubble.dart
-// ✅ CODE EXTRAIT DE VOTRE message_bubble.dart EXISTANT
+
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

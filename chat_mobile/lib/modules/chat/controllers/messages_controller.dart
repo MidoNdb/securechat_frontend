@@ -62,7 +62,7 @@ class MessagesController extends GetxController {
         
         if (userIdValue != null) {
           _currentUserId = userIdValue.toString();
-          print('👤 Current user ID from API: $_currentUserId');
+          print(' Current user ID from API: $_currentUserId');
           
           await _storage.saveUserId(_currentUserId!);
         }
@@ -308,16 +308,16 @@ class MessagesController extends GetxController {
     if (index != -1) {
       final conv = conversations[index];
       
-      // ✅ Afficher le bon texte selon le type
+      // Afficher le bon texte selon le type
       String displayText;
       if (message.type == 'IMAGE') {
         displayText = 'Photo';
       } else if (message.type == 'VIDEO') {
-        displayText = '🎥 Vidéo';
+        displayText = 'Vidéo';
       } else if (message.type == 'VOICE') {
         displayText = 'vocal';
       } else if (message.type == 'FILE') {
-        displayText = '📎';
+        displayText = '';
       } else {
         // Pour les messages texte, essayer de déchiffrer
         try {
@@ -353,8 +353,8 @@ class MessagesController extends GetxController {
   }
 
   void _applyCurrentFilter() {
-    print('🔍 Applying filter - currentUserId: $_currentUserId');
-    print('📊 Total conversations: ${conversations.length}');
+    print(' Applying filter - currentUserId: $_currentUserId');
+    print('Total conversations: ${conversations.length}');
     
     if (searchQuery.isNotEmpty) {
       filteredConversations.assignAll(
@@ -365,7 +365,7 @@ class MessagesController extends GetxController {
           return name.contains(query) || lastMsg.contains(query);
         }).toList(),
       );
-      print('🔍 Filtered by search: ${filteredConversations.length} results');
+      print(' Filtered by search: ${filteredConversations.length} results');
       return;
     }
 
@@ -384,7 +384,7 @@ class MessagesController extends GetxController {
         filteredConversations.assignAll(conversations);
     }
     
-    print('✅ Filtered conversations: ${filteredConversations.length}');
+    print(' Filtered conversations: ${filteredConversations.length}');
   }
 
   void calculateUnreadCount() {

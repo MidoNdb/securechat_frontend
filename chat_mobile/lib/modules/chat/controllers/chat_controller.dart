@@ -182,7 +182,7 @@ class ChatController extends GetxController {
       },
     );
   }
-  Future<void> _addNewMessage(Message message) async {  // ← async
+  Future<void> _addNewMessage(Message message) async {  // async
   final exists = messages.any((m) => m.id == message.id);
   if (exists) {
     print('Message déjà présent: ${message.id}');
@@ -197,7 +197,7 @@ class ChatController extends GetxController {
       message.decryptedContent == null && 
       message.encryptedContent != null) {
     
-    print('🔓 Message encore chiffré, déchiffrement...');
+    print('Message encore chiffré, déchiffrement...');
     
     try {
       final decryptedContent = await _messageService.decryptMessage(message);
@@ -335,7 +335,7 @@ class ChatController extends GetxController {
     try {
       isSendingMessage.value = true;
       
-      // 1. Vérifier le fichier existe
+      // Vérifier le fichier existe
       final voiceFile = File(voiceFilePath);
       if (!await voiceFile.exists()) {
         throw Exception('Fichier vocal introuvable: $voiceFilePath');
@@ -346,11 +346,11 @@ class ChatController extends GetxController {
       
      
       
-      // 3. Récupérer le destinataire
+      //  Récupérer le destinataire
       final recipientId = _getRecipientId();
       print(' Destinataire: $recipientId');
       
-      // 4. Envoyer via le service
+      //  Envoyer via le service
       print('Chiffrement et envoi en cours...');
       final message = await _voiceService.sendVoice(
         conversationId: conversation.id,
@@ -360,7 +360,7 @@ class ChatController extends GetxController {
 
       print('Message vocal envoyé: ${message.id}');
       
-      // 5. Ajouter à la liste
+      //  Ajouter à la liste
       _addNewMessage(message);
       
       

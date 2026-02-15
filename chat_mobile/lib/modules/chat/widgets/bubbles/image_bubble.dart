@@ -1,5 +1,4 @@
-// lib/modules/chat/widgets/bubbles/image_bubble.dart
-// ✅ CORRECTION MINIMALE - Juste ajout de mounted check
+
 
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -41,7 +40,7 @@ class _ImageBubbleState extends State<ImageBubble> {
   
   Future<void> _loadImage() async {
     try {
-      // ✅ Vérifier mounted AVANT setState
+      //  Vérifier mounted AVANT setState
       if (!mounted) return;
       
       setState(() {
@@ -51,7 +50,7 @@ class _ImageBubbleState extends State<ImageBubble> {
       
       final file = await _imageService.decryptImage(widget.message);
       
-      // ✅ Vérifier mounted AVANT setState
+      // Vérifier mounted AVANT setState
       if (!mounted) return;
       
       setState(() {
@@ -60,9 +59,9 @@ class _ImageBubbleState extends State<ImageBubble> {
       });
       
     } catch (e) {
-      print('❌ Erreur chargement image: $e');
+      print(' Erreur chargement image: $e');
       
-      // ✅ Vérifier mounted AVANT setState
+      // Vérifier mounted AVANT setState
       if (!mounted) return;
       
       setState(() {

@@ -1,5 +1,4 @@
-// lib/modules/chat/widgets/inputs/media_picker_widget.dart
-// ✅ NOUVEAU WIDGET - Sélection média moderne et organisée
+
 
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -241,7 +240,7 @@ class MediaPickerWidget extends StatelessWidget {
       }
       
     } catch (e) {
-      print('❌ Erreur sélection images: $e');
+      print(' Erreur sélection images: $e');
       Get.snackbar(
         'Erreur',
         'Impossible de sélectionner les images',
@@ -270,7 +269,7 @@ class MediaPickerWidget extends StatelessWidget {
       }
       
     } catch (e) {
-      print('❌ Erreur caméra: $e');
+      print(' Erreur caméra: $e');
       Get.snackbar(
         'Erreur',
         'Impossible de prendre une photo',

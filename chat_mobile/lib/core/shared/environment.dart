@@ -23,7 +23,7 @@ class AppEnvironment {
   static String get wsUrl {
     switch (current) {
       case Environment.LOCAL:
-        return 'ws://172.16.182.17:8000'; // ⚠️ Pas de /ws/chat/ ici 
+        return 'ws://172.16.182.17:8000'; //  Pas de /ws/chat/ ici 
       case Environment.STAGING:
         return 'wss://securechabackend-production.up.railway.app';
       case Environment.PRODUCTION:
