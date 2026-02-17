@@ -17,11 +17,20 @@ import 'data/services/crypto_service.dart';
 import 'data/services/message_service.dart';
 import 'data/services/websocket_service.dart';
 import 'data/api/dio_client.dart';
+import 'package:screen_protector/screen_protector.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await ScreenProtector.preventScreenshotOn();
+    print('🔒 Protection anti-capture activée');
+  } catch (e) {
+    print('⚠️ Erreur protection écran: $e');
+  }
 
   await initCriticalServices();
+  await initializeDateFormatting('fr_FR', null);
 
   final authService = Get.find<AuthService>();
   final isAuthenticated = await authService.isAuthenticated();
